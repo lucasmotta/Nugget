@@ -1,4 +1,4 @@
-package fashion.nugget.display.scoll
+package fashion.nugget.display.scroll
 {
 
 	import fashion.nugget.core.IDisposable;
