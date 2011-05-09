@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	
+	<stage>
+		<!-- Available options: showAll, exactFit, noBorder, noScale -->
+		<scale>noScale</scale>
+		<!-- Available options: default, T, L, B, R, TL, TR, BL, BR -->
+		<align>default</align>
+	</stage>
+	
+	<!-- Available attributes: hideBuiltInItems -->
+	<contextMenu hideBuiltInItems="true">
+		<!-- Available attributes: enabled (boolean), separatorBefore (boolean), visible (boolean) -->
+		<item enabled="true" visible="true" separatorBefore="false">
+			<caption>Lucas Motta</caption>
+			<link>http://lucasmotta.com</link>
+		</item>
+		<item enabled="true" visible="true" separatorBefore="true">
+			<caption>AP303</caption>
+			<link>contato@ap303.com</link>
+		</item>
+	</contextMenu>
+	
+</settings>
