@@ -47,13 +47,13 @@ package fashion.nugget.media.sound
 		/**
 		 * @constructor
 		 */
-		public function SoundItem(sound : Sound = null)
+		public function SoundItem(sound : Sound = null, volume : Number = 1)
 		{
 			_playing = false;
 			_muted = false;
 			_pausePosition = 0;
 			_soundQueue = 0;
-			_volume = 1;
+			_volume = volume;
 			_duration = 0;
 
 			this.sound = sound;

@@ -24,8 +24,6 @@ package fashion.nugget.core
 		
 		function set settings(value : Settings) : void
 		
-		function get settingsReady() : Boolean
-		
 		
 		function get loader() : ILoaderView
 		
@@ -35,8 +33,6 @@ package fashion.nugget.core
 		function get navigation() : INavigation
 		
 		function set navigation(value : INavigation) : void
-		
-		function get navigationReady() : Boolean
 		
 		
 		function get stage() : Stage

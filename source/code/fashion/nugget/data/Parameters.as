@@ -39,6 +39,10 @@ package fashion.nugget.data
 			}
 			return _instance;
 		}
+		public static function get(key : String) : *
+		{
+			return Parameters.getInstance().get(key);
+		}
 
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS

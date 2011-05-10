@@ -49,19 +49,12 @@ package fashion.nugget
 		
 		protected var _settings : Settings;
 		
-		protected var _settingsReady : Boolean;
-		
-		
 		protected var _parameters : Parameters;
 		
 		
 		protected var _loader : ILoaderView;
 		
-		
 		protected var _navigation : INavigation;
-		
-		protected var _navigationReady : Boolean;
-		
 		
 		protected var _views : IViewLibrary;
 		
@@ -114,8 +107,6 @@ package fashion.nugget
 		
 		protected function onNavigationReady(e : NuggetEvent) : void
 		{
-			_navigationReady = true;
-			
 			dispatchEvent(e.clone());
 			
 			_settings == null ? ready() : _settings.load();
@@ -123,8 +114,6 @@ package fashion.nugget
 		
 		protected function onSettingsReady(e : NuggetEvent) : void
 		{
-			_settingsReady = true;
-			
 			dispatchEvent(e.clone());
 			
 			ready();
@@ -198,14 +187,6 @@ package fashion.nugget
 		}
 		
 		/**
-		 * Return if the settings are ready or not
-		 */
-		public function get settingsReady() : Boolean
-		{
-			return _settingsReady;
-		}
-		
-		/**
 		 * A main loader view
 		 */
 		public function get loader() : ILoaderView
@@ -231,14 +212,6 @@ package fashion.nugget
 		{
 			_navigation = value;
 			_navigation.addEventListener(NuggetEvent.NAVIGATION_READY, onNavigationReady);
-		}
-		
-		/**
-		 * Return if the navigation is ready or not
-		 */
-		public function get navigationReady() : Boolean
-		{
-			return _navigationReady;
 		}
 		
 		/**
