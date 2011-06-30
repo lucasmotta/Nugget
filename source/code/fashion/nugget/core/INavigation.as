@@ -11,8 +11,14 @@ package fashion.nugget.core
 		
 		function to(id : String) : void
 		
-		function load() : void
+		function toDefault() : void
 		
+		function register(parameters : Object, ...dependencies) : void
+		
+		
+		function get id() : String
+		
+		function get lastId() : String
 		
 		function set nugget(value : INugget) : void
 		

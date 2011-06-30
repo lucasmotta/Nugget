@@ -9,8 +9,18 @@ package fashion.nugget.events
 	public class SectionEvent extends Event
 	{
 		
-		public static const CLOSED : String = "closed";
 		
+		// ----------------------------------------------------
+		// PUBLIC STATIC CONSTANTS
+		// ----------------------------------------------------
+		public static const CLOSED : String = "SectionEvent:CLOSED";
+		
+		// ----------------------------------------------------
+		// CONSTRUCTOR
+		// ----------------------------------------------------
+		/**
+		 * @constructor
+		 */
 		public function SectionEvent(type : String, bubbles : Boolean = false, cancelable : Boolean = false)
 		{
 			super(type, bubbles, cancelable);

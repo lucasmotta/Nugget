@@ -1,11 +1,7 @@
 package fashion.nugget
 {
 
-	import com.greensock.loading.ImageLoader;
-	import com.greensock.loading.LoaderMax;
-	import com.greensock.loading.SWFLoader;
-	import com.greensock.loading.VideoLoader;
-	import com.greensock.loading.XMLLoader;
+	import fashion.nugget.core.ICursor;
 	import fashion.nugget.core.ILoaderView;
 	import fashion.nugget.core.INavigation;
 	import fashion.nugget.core.INugget;
@@ -15,7 +11,15 @@ package fashion.nugget
 	import fashion.nugget.data.Settings;
 	import fashion.nugget.events.NuggetEvent;
 	import fashion.nugget.media.sound.SoundLibrary;
+	import fashion.nugget.util.display.safeRemoveChild;
 	import fashion.nugget.view.ViewLibrary;
+
+	import com.greensock.loading.ImageLoader;
+	import com.greensock.loading.LoaderMax;
+	import com.greensock.loading.SWFLoader;
+	import com.greensock.loading.VideoLoader;
+	import com.greensock.loading.XMLLoader;
+
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
@@ -60,6 +64,8 @@ package fashion.nugget
 		
 		protected var _soundLibrary : ISoundLibrary;
 		
+		protected var _cursor : ICursor;
+		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
@@ -100,22 +106,6 @@ package fashion.nugget
 			
 			_container.removeEventListener(Event.ADDED_TO_STAGE, onStageReady);
 			
-			dispatchEvent(new NuggetEvent(NuggetEvent.STAGE_READY));
-			
-			_navigation.load();
-		}
-		
-		protected function onNavigationReady(e : NuggetEvent) : void
-		{
-			dispatchEvent(e.clone());
-			
-			_settings == null ? ready() : _settings.load();
-		}
-		
-		protected function onSettingsReady(e : NuggetEvent) : void
-		{
-			dispatchEvent(e.clone());
-			
 			ready();
 		}
 		
@@ -144,7 +134,6 @@ package fashion.nugget
 			if(_navigation)
 			{
 				_navigation.dispose();
-				_navigation.removeEventListener(NuggetEvent.NAVIGATION_READY, onNavigationReady);
 			}
 			NuggetLibrary.remove(_id);			
 		}
@@ -178,7 +167,6 @@ package fashion.nugget
 		public function set settings(value : Settings) : void
 		{
 			_settings = value;
-			_settings.addEventListener(NuggetEvent.SETTINGS_READY, onSettingsReady);
 		}
 		
 		public function get settings() : Settings
@@ -211,7 +199,6 @@ package fashion.nugget
 		public function set navigation(value : INavigation) : void
 		{
 			_navigation = value;
-			_navigation.addEventListener(NuggetEvent.NAVIGATION_READY, onNavigationReady);
 		}
 		
 		/**
@@ -244,6 +231,29 @@ package fashion.nugget
 		public function get stageReady() : Boolean
 		{
 			return _stageReady;
+		}
+		
+		/**
+		 * Custom cursor
+		 */
+		public function set cursor(value : ICursor) : void
+		{
+			if(_cursor)
+			{
+				_cursor.dispose();
+				safeRemoveChild(_cursor as DisplayObject);
+				_cursor = null;
+			}
+			_cursor = value;
+			if(_cursor)
+			{
+				this.views.add("default-cursor", _cursor);
+			}
+		}
+		
+		public function get cursor() : ICursor
+		{
+			return _cursor;
 		}
 		
 	}

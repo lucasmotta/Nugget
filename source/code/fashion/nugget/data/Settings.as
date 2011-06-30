@@ -2,14 +2,12 @@ package fashion.nugget.data
 {
 
 	import fashion.nugget.Nugget;
-	import fashion.nugget.events.NuggetEvent;
 	import fashion.nugget.util.toBoolean;
 	import fashion.nugget.util.validation.isEmail;
 	import fashion.nugget.util.validation.isEmpty;
+
 	import flash.events.ContextMenuEvent;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.ui.ContextMenu;
@@ -32,11 +30,7 @@ package fashion.nugget.data
 		protected var _nugget : Nugget;
 		
 		
-		protected var _xmlLoader : URLLoader;
-		
 		protected var _xml : XML;
-		
-		protected var _url : String;
 		
 		
 		protected var _hasStage : Boolean;
@@ -58,16 +52,9 @@ package fashion.nugget.data
 		 * 
 		 * @param value				Either an URL for the XML or the XML itself
 		 */
-		public function Settings(value : *)
+		public function Settings(xml : XML)
 		{
-			if(value is String)
-			{
-				_url = value;
-			}
-			else if(value is XML)
-			{
-				_xml = value;
-			}
+			_xml = xml;
 		}
 		
 		// ----------------------------------------------------
@@ -117,18 +104,11 @@ package fashion.nugget.data
 			{
 				setupContextMenu();
 			}
-			
-			dispatchEvent(new NuggetEvent(NuggetEvent.SETTINGS_READY));
 		}
 		
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		protected function onLoadComplete(e : Event) : void
-		{
-			parse(new XML(_xmlLoader.data));
-		}
-		
 		protected function onContextMenuSelected(e : ContextMenuEvent) : void
 		{
 			var link : String = _xml.child("contextMenu").child("item").(child("caption") == e.target["caption"]).child("link").toString();
@@ -147,6 +127,8 @@ package fashion.nugget.data
 		{
 			_nugget = nugget;
 			
+			parse(_xml);
+			
 			if(_hasStage)
 			{
 				nugget.stage.align = _stageAlign;
@@ -158,18 +140,6 @@ package fashion.nugget.data
 			}
 		}
 		
-		public function load() : void
-		{
-			if(_xml != null)
-			{
-				parse(_xml);
-				return;
-			}
-			//
-			_xmlLoader = new URLLoader();
-			_xmlLoader.addEventListener(Event.COMPLETE, onLoadComplete);
-			_xmlLoader.load(new URLRequest(_url));
-		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------

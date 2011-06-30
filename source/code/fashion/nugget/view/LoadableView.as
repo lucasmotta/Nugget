@@ -8,42 +8,39 @@ package fashion.nugget.view
 	import com.greensock.loading.core.DisplayObjectLoader;
 	import com.greensock.loading.core.LoaderCore;
 
-
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
 	public class LoadableView extends View implements IDisposable
 	{
-		
+
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
 		protected var _url : String;
-		
-		protected var _type : String;
-		
+
 		protected var _loader : DisplayObjectLoader;
+
+
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
 		 */
-		public function LoadableView(url : String, type : String = null)
+		public function LoadableView(url : String)
 		{
 			_url = url;
-			_type = type;
-			
+
 			_loader = LoaderMax.parse(_url);
 			_loader.addEventListener(LoaderEvent.OPEN, onLoadStart);
 			_loader.addEventListener(LoaderEvent.PROGRESS, onLoadProgress);
 			_loader.addEventListener(LoaderEvent.COMPLETE, onLoadComplete);
 		}
-		
+
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
@@ -58,11 +55,10 @@ package fashion.nugget.view
 		protected function onLoadComplete(e : LoaderEvent) : void
 		{
 		}
-		
+
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -70,17 +66,22 @@ package fashion.nugget.view
 		{
 			_loader.load();
 		}
-		
+
 		override public function dispose() : void
 		{
-			if(_loader)
+			if(_disposed) return;
+			
+			if (_loader)
 			{
+				_loader.removeEventListener(LoaderEvent.OPEN, onLoadStart);
+				_loader.removeEventListener(LoaderEvent.PROGRESS, onLoadProgress);
+				_loader.removeEventListener(LoaderEvent.COMPLETE, onLoadComplete);
 				_loader.dispose();
 				_loader = null;
 			}
 			super.dispose();
 		}
-		
+
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
@@ -88,15 +89,15 @@ package fashion.nugget.view
 		{
 			return _url;
 		}
-		
-		public function get type() : String
-		{
-			return _type;
-		}
-		
+
 		public function get loader() : LoaderCore
 		{
 			return _loader;
+		}
+
+		public function get loaded() : Boolean
+		{
+			return _loader ? _loader.rawContent != null : false;
 		}
 	}
 }

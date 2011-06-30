@@ -1,82 +1,56 @@
-package fashion.nugget.view
+package fashion.nugget.display
 {
 
-	import fashion.nugget.core.IDependencies;
-	import fashion.nugget.core.ISectionView;
-	import fashion.nugget.events.SectionEvent;
 
-	import flash.events.Event;
-
+	import flash.display.BitmapData;
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
-	 * 
-	 * The SectionView has implemented the transitions and the dependencies of this section
 	 */
-	public class SectionView extends NuggetView implements ISectionView
+	public class PatternBox extends Box
 	{
-
+		
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
+		protected var _bitmapData : BitmapData;
+		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
 		 */
-		public function SectionView()
+		public function PatternBox(bitmapData : BitmapData, width : Number, height : Number)
 		{
+			_bitmapData = bitmapData;
+			
+			super(0, width, height);
 		}
-
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-
+		override protected function redraw() : void
+		{
+			this.graphics.clear();
+			this.graphics.beginBitmapFill(_bitmapData);
+			_radius == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _radius);
+			this.graphics.endFill();
+		}
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		override protected function onAddedToStage(e : Event) : void
-		{
-			super.onAddedToStage(e);
-			
-			transitionIn();
-		}
+		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		public function transitionIn() : void
-		{
-			transitionInComplete();
-		}
-
-		public function transitionInComplete() : void
-		{
-		}
-
-		public function transitionOut() : void
-		{
-			transitionOutComplete();
-		}
-
-		public function transitionOutComplete() : void
-		{
-			dispose();
-
-			this.dispatchEvent(new SectionEvent(SectionEvent.CLOSED));
-		}
-
+		
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		/**
-		 * Dependencies
-		 */
-		public function get dependencies() : IDependencies
-		{
-			return this.nugget.loader.dependencies;
-		}
 	}
 }

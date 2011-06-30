@@ -10,6 +10,8 @@ package fashion.nugget.view
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Library of views
 	 */
 	public class ViewLibrary implements IViewLibrary
 	{
@@ -48,10 +50,10 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		public function add(id : String, view : INuggetView) : void
 		{
+			_views[id] = view;
+			
 			view.nugget = _nugget;
 			_nugget.container.addChild(view as DisplayObject);
-			//
-			_views[id] = view;
 		}
 
 		public function get(id : String) : INuggetView
@@ -65,6 +67,7 @@ package fashion.nugget.view
 			if(view)
 			{
 				view.dispose();
+				_views[id] = null;
 				delete _views[id];
 			}
 		}

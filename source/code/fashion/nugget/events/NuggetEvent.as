@@ -11,21 +11,8 @@ package fashion.nugget.events
 		// ----------------------------------------------------
 		// PUBLIC STATIC CONSTANTS
 		// ----------------------------------------------------
-		public static const STAGE_READY : String = "stageReady";
+		public static const READY : String = "NuggetEvent:READY";
 		
-		public static const SETTINGS_READY : String = "settingsReady";
-		
-		public static const NAVIGATION_READY : String = "navigationReady";
-		
-		public static const READY : String = "ready";
-		
-		// ----------------------------------------------------
-		// PUBLIC VARIABLES
-		// ----------------------------------------------------
-		
-		// ----------------------------------------------------
-		// PRIVATE AND PROTECTED VARIABLES
-		// ----------------------------------------------------
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
@@ -37,21 +24,5 @@ package fashion.nugget.events
 		{
 			super(type, bubbles, cancelable);
 		}
-		
-		// ----------------------------------------------------
-		// PRIVATE AND PROTECTED METHODS
-		// ----------------------------------------------------
-		
-		// ----------------------------------------------------
-		// EVENT HANDLERS
-		// ----------------------------------------------------
-		
-		// ----------------------------------------------------
-		// PUBLIC METHODS
-		// ----------------------------------------------------
-		
-		// ----------------------------------------------------
-		// GETTERS AND SETTERS
-		// ----------------------------------------------------
 	}
 }

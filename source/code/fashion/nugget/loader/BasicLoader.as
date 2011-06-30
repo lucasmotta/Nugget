@@ -1,6 +1,7 @@
 package fashion.nugget.loader
 {
 
+	import fashion.nugget.core.IDependencies;
 	import fashion.nugget.core.ILoaderView;
 	import fashion.nugget.core.INavigation;
 	import fashion.nugget.core.ISectionView;
@@ -16,24 +17,22 @@ package fashion.nugget.loader
 	 */
 	public class BasicLoader extends NuggetView implements ILoaderView
 	{
-		
+
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
 		protected var _navigation : INavigation;
-		
-		
-		protected var _dependencies : Dependencies;
-		
+
+		protected var _dependencies : IDependencies;
+
 		protected var _section : ISectionView;
-		
+
 		protected var _loadProgress : Number;
-		
-		
+
+
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
@@ -44,15 +43,15 @@ package fashion.nugget.loader
 		{
 			_loadProgress = 0;
 		}
-		
+
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
 		protected function loadStart() : void
 		{
 			_loadProgress = 0;
-			
-			if(_dependencies.hasDependencies)
+
+			if (_dependencies.hasDependencies)
 			{
 				_dependencies.queueLoader.addEventListener(LoaderEvent.COMPLETE, onLoadComplete);
 				_dependencies.queueLoader.addEventListener(LoaderEvent.PROGRESS, onLoadProgress);
@@ -64,7 +63,7 @@ package fashion.nugget.loader
 				onLoadComplete(null);
 			}
 		}
-		
+
 		protected function loadComplete() : void
 		{
 			_section = _dependencies.section;
@@ -72,6 +71,7 @@ package fashion.nugget.loader
 			_section.addEventListener(SectionEvent.CLOSED, onSectionClosed);
 			addChild(_section as DisplayObject);
 		}
+
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
@@ -79,20 +79,21 @@ package fashion.nugget.loader
 		{
 			loadComplete();
 		}
-		
+
 		protected function onLoadProgress(e : LoaderEvent) : void
 		{
 			this.loadProgress = _dependencies.hasDependencies ? _dependencies.queueLoader.progress : 1;
 		}
-		
+
 		protected function onSectionClosed(e : SectionEvent) : void
 		{
 			_section = null;
-			if(_dependencies != null)
+			if (_dependencies != null)
 			{
 				loadStart();
 			}
 		}
+
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -101,17 +102,17 @@ package fashion.nugget.loader
 		 * 
 		 * @param dependencies			Dependencies to load (including the own section)
 		 */
-		public function load(dependencies : Dependencies) : void
+		public function load(dependencies : IDependencies) : void
 		{
-			if(_dependencies)
+			if (_dependencies)
 			{
 				_dependencies.dispose();
 				_dependencies = null;
 			}
 			_dependencies = dependencies;
-			_section != null ? _section.transitionOut() : loadStart();
+			_section == null ? loadStart() : _section.transitionOut();
 		}
-		
+
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
@@ -119,12 +120,12 @@ package fashion.nugget.loader
 		{
 			_loadProgress = value;
 		}
-		
+
 		public function get loadProgress() : Number
 		{
 			return _loadProgress;
 		}
-		
+
 		public function get navigation() : INavigation
 		{
 			return _navigation;
@@ -134,8 +135,8 @@ package fashion.nugget.loader
 		{
 			_navigation = value;
 		}
-		
-		public function get dependencies() : Dependencies
+
+		public function get dependencies() : IDependencies
 		{
 			return _dependencies;
 		}

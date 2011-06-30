@@ -35,6 +35,11 @@ package fashion.nugget.core
 		function set navigation(value : INavigation) : void
 		
 		
+		function get cursor() : ICursor
+		
+		function set cursor(value : ICursor) : void
+		
+		
 		function get stage() : Stage
 		
 		function get stageReady() : Boolean

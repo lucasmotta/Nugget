@@ -1,6 +1,8 @@
 package fashion.nugget.media.sound
 {
 
+	import fashion.nugget.events.SoundEvent;
+	import flash.events.EventDispatcher;
 	import fashion.nugget.core.ISoundItem;
 	import fashion.nugget.core.ISoundLibrary;
 
@@ -10,7 +12,7 @@ package fashion.nugget.media.sound
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
-	public class SoundLibrary implements ISoundLibrary
+	public class SoundLibrary extends EventDispatcher implements ISoundLibrary
 	{
 		
 		// ----------------------------------------------------
@@ -21,6 +23,8 @@ package fashion.nugget.media.sound
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
 		protected var _sounds : Dictionary;
+		
+		protected var _muted : Boolean;
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
@@ -62,7 +66,9 @@ package fashion.nugget.media.sound
 		 */
 		public function add(id : String, sound : *) : void
 		{
-			_sounds[id] = sound is Sound ? new SoundItem(sound) : sound;
+			var soundItem : SoundItem = sound is Sound ? new SoundItem(sound) : sound;
+			if(_muted) soundItem.mute();
+			_sounds[id] = soundItem;
 		}
 		
 		/**
@@ -196,11 +202,15 @@ package fashion.nugget.media.sound
 		 */
 		public function muteAll() : void
 		{
+			if(_muted) return;
+			_muted = true;
+			
 			var sound : ISoundItem;
 			for each(sound in _sounds)
 			{
 				sound.mute();
 			}
+			this.dispatchEvent(new SoundEvent(SoundEvent.MUTE_ALL));
 		}
 		
 		/**
@@ -208,11 +218,15 @@ package fashion.nugget.media.sound
 		 */
 		public function unmuteAll() : void
 		{
+			if(!_muted) return;
+			_muted = false;
+			
 			var sound : ISoundItem;
 			for each(sound in _sounds)
 			{
 				sound.unmute();
 			}
+			this.dispatchEvent(new SoundEvent(SoundEvent.UNMUTE_ALL));
 		}
 		
 		/**
@@ -229,6 +243,10 @@ package fashion.nugget.media.sound
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		public function get muted() : Boolean
+		{
+			return _muted;
+		}
 
 	}
 }

@@ -15,7 +15,9 @@ package fashion.nugget.util.string
 		var zeros : String = "";
 		value = Math.round(value * multiplier);
 		while (zeros.length < (totalChars - value.toString().length))
+		{
 			zeros += "0";
+		}
 		return zeros + value.toString() + signal;
 	}
 }

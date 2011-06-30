@@ -7,13 +7,11 @@ package fashion.nugget.view
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * The view class extended with the nugget application. Where you can access other views, navigation, loader, sound controller, etc...
 	 */
 	public class NuggetView extends View implements INuggetView
 	{
-		
-		// ----------------------------------------------------
-		// PUBLIC VARIABLES
-		// ----------------------------------------------------
 		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
@@ -28,7 +26,7 @@ package fashion.nugget.view
 		 */
 		public function NuggetView()
 		{
-			super();
+			
 		}
 		
 		// ----------------------------------------------------

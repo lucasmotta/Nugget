@@ -1,82 +1,71 @@
-package fashion.nugget.view
+package fashion.nugget.display
 {
 
-	import fashion.nugget.core.IDependencies;
-	import fashion.nugget.core.ISectionView;
-	import fashion.nugget.events.SectionEvent;
-
+	import fashion.nugget.util.display.safeRemoveChild;
+	import flash.display.Sprite;
 	import flash.events.Event;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
-	 * 
-	 * The SectionView has implemented the transitions and the dependencies of this section
 	 */
-	public class SectionView extends NuggetView implements ISectionView
+	public class SpriteExtended extends Sprite
 	{
-
+		
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
+		protected var _disposed : Boolean;
+		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
 		 */
-		public function SectionView()
+		public function SpriteExtended()
 		{
+			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-
+		protected function init() : void
+		{
+			
+		}
+		
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		override protected function onAddedToStage(e : Event) : void
+		protected function onAddedToStage(e : Event) : void
 		{
-			super.onAddedToStage(e);
+			init();
 			
-			transitionIn();
+			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
+		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		public function transitionIn() : void
+		public function dispose() : void
 		{
-			transitionInComplete();
+			if(_disposed) return;
+			_disposed = true;
+			
+			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			safeRemoveChild(this);
 		}
-
-		public function transitionInComplete() : void
-		{
-		}
-
-		public function transitionOut() : void
-		{
-			transitionOutComplete();
-		}
-
-		public function transitionOutComplete() : void
-		{
-			dispose();
-
-			this.dispatchEvent(new SectionEvent(SectionEvent.CLOSED));
-		}
-
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		/**
-		 * Dependencies
-		 */
-		public function get dependencies() : IDependencies
+		public function get ready() : Boolean
 		{
-			return this.nugget.loader.dependencies;
+			return this.stage != null;
 		}
 	}
 }

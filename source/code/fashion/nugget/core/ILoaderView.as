@@ -1,7 +1,6 @@
 package fashion.nugget.core
 {
 
-	import fashion.nugget.loader.Dependencies;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -9,10 +8,10 @@ package fashion.nugget.core
 	public interface ILoaderView extends INuggetView
 	{
 		
-		function load(dependencies : Dependencies) : void
+		function load(dependencies : IDependencies) : void
 		
 		
-		function get dependencies() : Dependencies
+		function get dependencies() : IDependencies
 		
 		function set navigation(value : INavigation) : void
 		

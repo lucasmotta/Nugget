@@ -1,6 +1,7 @@
 package fashion.nugget.view
 {
 
+	import fashion.nugget.util.display.safeRemoveChild;
 	import fashion.nugget.core.IView;
 
 	import flash.display.Sprite;
@@ -8,6 +9,11 @@ package fashion.nugget.view
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Simple view with some basic features, like:
+	 * – Check when the view is added to stage;
+	 * – Resize method;
+	 * – Bring to front / Send to back methods
 	 */
 	public class View extends Sprite implements IView
 	{
@@ -19,7 +25,7 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _ready : Boolean;
+		protected var _disposed : Boolean;
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
@@ -43,16 +49,16 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		private function onAddedToStage(e : Event) : void
+		protected function onAddedToStage(e : Event) : void
 		{
-			_ready = true;
-			
 			init();
+			resize();
 			
+			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			stage.addEventListener(Event.RESIZE, onStageResize);
 		}
 		
-		private function onStageResize(e : Event) : void
+		protected function onStageResize(e : Event) : void
 		{
 			resize();
 		}
@@ -81,14 +87,15 @@ package fashion.nugget.view
 		
 		public function dispose() : void
 		{
+			if(_disposed) return;
+			_disposed = true;
+			
 			if(this.ready)
 			{
 				stage.removeEventListener(Event.RESIZE, onStageResize);
 			}
-			if(this.parent != null)
-			{
-				if(this.parent.contains(this)) this.parent.removeChild(this);
-			}
+			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			safeRemoveChild(this);
 		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
@@ -98,7 +105,7 @@ package fashion.nugget.view
 		 */
 		public function get ready() : Boolean
 		{
-			return _ready;
+			return this.stage != null;
 		}
 	}
 }
