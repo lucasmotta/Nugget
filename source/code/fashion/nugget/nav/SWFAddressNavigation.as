@@ -76,6 +76,17 @@ package fashion.nugget.nav
 			
 			SWFAddress.setValue(array.join("/"));
 		}
+		
+		override public function dispose() : void
+		{
+			if(_watcher)
+			{
+				_watcher.dispose();
+				_watcher.removeEventListener(Event.CHANGE, onSWFAddressChange);
+				_watcher = null;
+			}
+			super.dispose();
+		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
