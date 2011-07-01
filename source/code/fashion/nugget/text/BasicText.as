@@ -2,6 +2,7 @@ package fashion.nugget.text
 {
 
 
+	import fashion.nugget.core.ITextEffect;
 	import fashion.nugget.util.display.safeRemoveChild;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -40,6 +41,8 @@ package fashion.nugget.text
 		
 		
 		protected var _icon : DisplayObject;
+		
+		protected var _effect : ITextEffect;
 
 
 		// ----------------------------------------------------
@@ -68,7 +71,6 @@ package fashion.nugget.text
 			_textField.embedFonts = true;
 			_textField.selectable = false;
 			_textField.wordWrap = false;
-			_textField.mouseEnabled = false;
 			_textField.mouseWheelEnabled = false;
 			_textField.alwaysShowSelection = false;
 			if (_format != null) _textField.defaultTextFormat = _format;
@@ -115,12 +117,25 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		public function get content() : String
+		{
+			return _content;
+		}
+		
 		/**
 		 * HTML Text content
 		 */
 		public function set htmlText(value : String) : void
 		{
-			_textField.htmlText = value;
+			_content = value;
+			if(_effect)
+			{
+				_effect.text = value;
+			}
+			else
+			{
+				_textField.htmlText = value;
+			}
 		}
 
 		public function get htmlText() : String
@@ -133,7 +148,15 @@ package fashion.nugget.text
 		 */
 		public function set text(value : String) : void
 		{
-			_textField.text = value;
+			_content = value;
+			if(_effect)
+			{
+				_effect.text = value;
+			}
+			else
+			{
+				_textField.text = value;
+			}
 		}
 
 		public function get text() : String
@@ -195,6 +218,23 @@ package fashion.nugget.text
 		public function get css() : StyleSheet
 		{
 			return _css;
+		}
+		
+		/**
+		 * Text Effect
+		 */
+		public function set effect(value : ITextEffect) : void
+		{
+			_effect = value;
+			if(_effect)
+			{
+				_effect.source = this;
+			}
+		}
+		
+		public function get effect() : ITextEffect
+		{
+			return _effect;
 		}
 		
 		/**
