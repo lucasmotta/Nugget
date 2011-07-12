@@ -11,7 +11,7 @@ package fashion.nugget.text.effects
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
-	public class TypeEffect implements ITextEffect
+	public class TypeEffect extends AbstractEffect implements ITextEffect
 	{
 
 		// ----------------------------------------------------
@@ -20,13 +20,11 @@ package fashion.nugget.text.effects
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _source : BasicText;
-
 		protected var _reference : TextField;
 
-		protected var _anim : TextAnim;
+		protected var _anim : StringAnim;
 
-		protected var _previousAnim : TextAnim;
+		protected var _previousAnim : StringAnim;
 
 		protected var _reverse : Boolean;
 
@@ -40,6 +38,10 @@ package fashion.nugget.text.effects
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param reverse			Set if the change will show from the beginning of the string or through the end of the string
+		 * @param oldTextColor		Set if the old text (the one that is being replaced) will have a different color or not. Set as undefined if you don't want to set anything
+		 * @param timeScale			Time scale of the animation
 		 */
 		public function TypeEffect(reverse : Boolean = false, oldTextColor : Number = undefined, timeScale : Number = 1)
 		{
@@ -76,7 +78,7 @@ package fashion.nugget.text.effects
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		public function dispose() : void
+		override public function dispose() : void
 		{
 			if (_anim)
 			{
@@ -97,7 +99,7 @@ package fashion.nugget.text.effects
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		public function set text(value : String) : void
+		override public function set text(value : String) : void
 		{
 			if (_anim)
 			{
@@ -108,21 +110,37 @@ package fashion.nugget.text.effects
 			_reference.htmlText = value;
 			value = _reference.text;
 
-			_anim = new TextAnim(value);
+			_anim = new StringAnim(value);
+			_anim.reverse = _reverse;
+			SleekTween.to(_anim, .7 * _timeScale, { progress:1, onUpdate:apply });
+		}
+		
+		override public function set htmlText(value : String) : void
+		{
+			if (_anim)
+			{
+				_previousAnim = _anim;
+				_previousAnim.reverse = true;
+				SleekTween.to(_anim, .7 * _timeScale, { progress:0 });
+			}
+			_reference.htmlText = value;
+			value = _reference.text;
+
+			_anim = new StringAnim(value);
 			_anim.reverse = _reverse;
 			SleekTween.to(_anim, .7 * _timeScale, { progress:1, onUpdate:apply, onComplete:animationCompleted });
 		}
 
-		public function set source(value : BasicText) : void
+		override public function set source(value : BasicText) : void
 		{
 			_source = value;
 
 			_source.textField.text = "";
-			this.text = _source.content;
+			this.htmlText = _source.content;
 		}
 	}
 }
-internal class TextAnim
+internal class StringAnim
 {
 
 	protected var _value : String;
@@ -136,7 +154,7 @@ internal class TextAnim
 	protected var _reverse : Boolean;
 
 
-	public function TextAnim(value : String)
+	public function StringAnim(value : String)
 	{
 		_value = value;
 		_length = value.length;

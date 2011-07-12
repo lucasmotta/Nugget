@@ -10,6 +10,8 @@ package fashion.nugget.core
 	{
 
 		function set text(value : String) : void
+		
+		function set htmlText(value : String) : void
 
 		function set source(value : BasicText) : void
 	}

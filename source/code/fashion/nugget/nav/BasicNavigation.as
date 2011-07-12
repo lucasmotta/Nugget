@@ -6,8 +6,10 @@ package fashion.nugget.nav
 	import fashion.nugget.core.INugget;
 	import fashion.nugget.events.NavigationEvent;
 	import fashion.nugget.loader.Dependencies;
-
+	import fashion.nugget.nav.custom.CustomDependency;
+	import fashion.nugget.nav.custom.CustomSection;
 	import flash.events.EventDispatcher;
+
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -91,31 +93,25 @@ package fashion.nugget.nav
 		/**
 		 * Register a new section manually
 		 * 
-		 * @param parameters		Parameters of your section ({ view:"com.domain.YourClass" } or { file:"file.swf", estimatedBytes=200 })
-		 * @param dependencies		Dependencies ({ id:"my_xml_id", type:"xml", estimatedBytes:50, file:"file.xml" })
+		 * @param section			Custom section parameters
+		 * @param dependencies		CustomDependency
 		 * 
 		 * @example
 		 <code>
-			  register({ view:"com.lucasmotta.section.Home" }, { id:"main_image", type:"image", estimatedBytes:200, file:"image.jpg" }, { id:"my_xml", type:"xml", estimatedBytes:50, file:"file.xml" });
+			  register(new CustomSection("com.lucasmotta.section.Home", "home"), new CustomDependency("image.jpg", "main_image", "image", 200), new CustomDependency("content.xml", "my_xml", "xml", 50));
 		 </code>
 		 * 
 		 */
-		public function register(parameters : Object, ...dependencies) : void
+		public function register(section : CustomSection, ...dependencies) : void
 		{
-			var view : String = parameters["view"];
-			var file : String = parameters["file"];
-			var estimatedBytes : String = parameters["estimatedBytes"];
-
-			var node : XML = <section />;
-			node.appendChild(view != null ? <view>{view}</view> : estimatedBytes == null ? <file>{file}</file> : <file estimatedBytes={estimatedBytes}>{file}</file>);
+			var node : XML = section.node;
+			
 			if (dependencies.length > 0)
 			{
 				var dependenciesNode : XML = <dependencies />;
-				var count : int;
-				for each (var obj : * in dependencies)
+				for each (var dependency : CustomDependency in dependencies)
 				{
-					dependenciesNode.appendChild(<dependency id={obj["id"] || count} type={obj["type"] || ""} estimatedBytes={obj["estimatedBytes"] || "200"}>{obj["file"]}</dependency>);
-					count++;
+					dependenciesNode.appendChild(dependency.node);
 				}
 				node.appendChild(dependenciesNode);
 			}

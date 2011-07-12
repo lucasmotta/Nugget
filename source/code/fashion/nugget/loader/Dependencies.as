@@ -79,7 +79,7 @@ package fashion.nugget.loader
 			var i : int;
 			const list : XMLList = _xml.child("dependencies").child("dependency");
 			const length : int = list.length();
-
+			
 			if (length <= 0) return;
 
 			for (i = 0; i < length; i++)

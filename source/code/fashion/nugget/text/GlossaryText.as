@@ -40,9 +40,10 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		public function dispose() : void
+		override public function dispose() : void
 		{
 			removeFromGlossary(_glossaryItem);
+			super.dispose();
 		}
 		
 		// ----------------------------------------------------

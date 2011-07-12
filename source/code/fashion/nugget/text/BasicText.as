@@ -2,9 +2,9 @@ package fashion.nugget.text
 {
 
 
+	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.ITextEffect;
-	import fashion.nugget.util.display.safeRemoveChild;
-	import flash.display.DisplayObject;
+
 	import flash.display.Sprite;
 	import flash.text.AntiAliasType;
 	import flash.text.StyleSheet;
@@ -16,12 +16,8 @@ package fashion.nugget.text
 	 * @author		Lucas Motta (http://lucasmotta.com)
 	 * @since		Jan 21, 2011
 	 */
-	public class BasicText extends Sprite
+	public class BasicText extends Sprite implements IDisposable
 	{
-		
-		public static const LEFT : String = "left";
-		
-		public static const RIGHT : String = "right";
 		
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
@@ -31,7 +27,7 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		protected var _content : String;
 
-		protected var _format : TextFormat;
+		protected var _textFormat : TextFormat;
 
 		protected var _css : StyleSheet;
 
@@ -39,8 +35,8 @@ package fashion.nugget.text
 
 		protected var _width : Number;
 		
+		protected var _pixelFont : Boolean;
 		
-		protected var _icon : DisplayObject;
 		
 		protected var _effect : ITextEffect;
 
@@ -54,7 +50,7 @@ package fashion.nugget.text
 		public function BasicText(content : String, format : TextFormat = null, css : StyleSheet = null) : void
 		{
 			_content = content;
-			_format = format || new TextFormat("Arial", 12, 0x000000);
+			_textFormat = format;
 			_css = css;
 			_width = 200;
 
@@ -73,7 +69,7 @@ package fashion.nugget.text
 			_textField.wordWrap = false;
 			_textField.mouseWheelEnabled = false;
 			_textField.alwaysShowSelection = false;
-			if (_format != null) _textField.defaultTextFormat = _format;
+			if (_textFormat != null) _textField.defaultTextFormat = _textFormat;
 			if (_css != null) _textField.styleSheet = _css;
 			_textField.antiAliasType = AntiAliasType.ADVANCED;
 			_textField.autoSize = TextFieldAutoSize.LEFT;
@@ -94,24 +90,22 @@ package fashion.nugget.text
 			_textField.sharpness = sharpness;
 		}
 		
-		public function setIcon(icon : DisplayObject, padding : int = 0, align : String = null) : void
+		public function dispose() : void
 		{
-			removeIcon();
-			
-			_icon = icon;
-			_icon.x = align == BasicText.RIGHT ? _textField.x + _textField.width + padding : 0;
-			if(align != BasicText.RIGHT) _textField.x = _icon.x + _icon.width + padding;
-			addChild(_icon);
+			if(_effect)
+			{
+				_effect.dispose();
+				_effect = null;
+			}
 		}
 		
-		public function removeIcon() : void
+		public function clone() : BasicText
 		{
-			if(_icon)
-			{
-				safeRemoveChild(_icon);
-				_icon = null;
-				_textField.x = _textField.y = 0;
-			}
+			var txt : BasicText = new BasicText(_content, _textFormat, _css);
+			txt.pixelFont = this.pixelFont;
+			txt.multiline = this.multiline;
+			txt.width = this.width;
+			return txt;
 		}
 
 		// ----------------------------------------------------
@@ -130,7 +124,7 @@ package fashion.nugget.text
 			_content = value;
 			if(_effect)
 			{
-				_effect.text = value;
+				_effect.htmlText = value;
 			}
 			else
 			{
@@ -174,7 +168,7 @@ package fashion.nugget.text
 				_textField.wordWrap = true;
 				_textField.multiline = true;
 				_textField.width = _width;
-				_textField.autoSize = _format.align == TextFormatAlign.RIGHT ? TextFieldAutoSize.RIGHT : TextFieldAutoSize.LEFT;
+				_textField.autoSize = _textFormat.align == TextFormatAlign.RIGHT ? TextFieldAutoSize.RIGHT : TextFieldAutoSize.LEFT;
 				_textField.htmlText = _content;
 			}
 			else
@@ -197,13 +191,13 @@ package fashion.nugget.text
 		 */
 		public function set textFormat(value : TextFormat) : void
 		{
-			_format = value;
-			_textField.defaultTextFormat = _format;
+			_textFormat = value;
+			_textField.defaultTextFormat = _textFormat;
 		}
 
 		public function get textFormat() : TextFormat
 		{
-			return _format;
+			return _textFormat;
 		}
 
 		/**
@@ -242,7 +236,13 @@ package fashion.nugget.text
 		 */
 		public function set pixelFont(value : Boolean) : void
 		{
+			_pixelFont = value;
 			_textField.antiAliasType = value ? AntiAliasType.NORMAL : AntiAliasType.ADVANCED;
+		}
+		
+		public function get pixelFont() : Boolean
+		{
+			return _pixelFont;
 		}
 		
 		/**

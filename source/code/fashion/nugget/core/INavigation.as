@@ -1,6 +1,7 @@
 package fashion.nugget.core
 {
 
+	import fashion.nugget.nav.custom.CustomSection;
 	import flash.events.IEventDispatcher;
 
 	/**
@@ -13,7 +14,7 @@ package fashion.nugget.core
 		
 		function toDefault() : void
 		
-		function register(parameters : Object, ...dependencies) : void
+		function register(section : CustomSection, ...dependencies) : void
 		
 		
 		function get id() : String
