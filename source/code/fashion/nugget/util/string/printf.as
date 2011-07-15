@@ -71,7 +71,7 @@ package fashion.nugget.util.string
 		while (Boolean(result))
 		{
 			match = new Match();
-			match.startIndex = result.index;
+			match.startIndex = result["index"];
 			match.length = String(result[0]).length;
 			match.endIndex = match.startIndex + match.length;
 			match.content = String(result[0]);
@@ -174,7 +174,8 @@ package fashion.nugget.util.string
 							match.replacement = (replacementValue["hours"] >= 12 ? "p.m" : "a.m");
 							break;
 						case DATE_TOLOCALE_FORMATTER:
-							match.replacement = Date(replacementValue).toLocaleString();
+							var tempDate : Date = replacementValue as Date;
+							match.replacement = tempDate.toLocaleString();
 							break;
 						case DATE_MINUTES_FORMATTER:
 							match.replacement = replacementValue["minutes"];
