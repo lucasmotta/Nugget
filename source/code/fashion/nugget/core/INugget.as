@@ -1,6 +1,7 @@
 package fashion.nugget.core
 {
 
+	import fashion.nugget.data.Parameters;
 	import flash.events.IEventDispatcher;
 	import fashion.nugget.data.Settings;
 
@@ -48,5 +49,7 @@ package fashion.nugget.core
 		function get views() : IViewLibrary
 		
 		function get soundLibrary() : ISoundLibrary
+		
+		function get parameters() : Parameters
 	}
 }

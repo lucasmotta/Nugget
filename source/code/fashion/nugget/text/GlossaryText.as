@@ -14,6 +14,13 @@ package fashion.nugget.text
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Glossary text is an extension of the <code>BasicText</code> class.
+	 * It's usually used when you have to change the language of your application in real time.
+	 * Instead of applying the content directly to the textField, you use a key that identifies the position of your text in the XML.
+	 * 
+	 * @see	fashion.nugget.i18n.Glossary
+	 * @see	fashion.nugget.i18n.GlossaryItem
 	 */
 	public class GlossaryText extends BasicText implements IGlossaryText, IDisposable
 	{
@@ -28,6 +35,10 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param key			Identifier of your text on the XML
+		 * @param format		Default TextFormat of your text
+		 * @param css			Default StyleSheet of your text
 		 */
 		public function GlossaryText(key : String, format : TextFormat = null, css : StyleSheet = null)
 		{

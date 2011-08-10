@@ -46,6 +46,10 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param content		You text content
+		 * @param format		Default TextFormat of your text
+		 * @param css			Default StyleSheet of your text
 		 */
 		public function BasicText(content : String, format : TextFormat = null, css : StyleSheet = null) : void
 		{
@@ -84,12 +88,21 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Set the thickness and sharpness of your text
+		 * 
+		 * @param thickness		Thickness of your text
+		 * @param sharpness		Sharpness of your text
+		 */
 		public function setThickness(thickness : int, sharpness : int) : void
 		{
 			_textField.thickness = thickness;
 			_textField.sharpness = sharpness;
 		}
 		
+		/**
+		 * Dispose
+		 */
 		public function dispose() : void
 		{
 			if(_effect)
@@ -99,6 +112,9 @@ package fashion.nugget.text
 			}
 		}
 		
+		/**
+		 * Close this text instance
+		 */
 		public function clone() : BasicText
 		{
 			var txt : BasicText = new BasicText(_content, _textFormat, _css);
@@ -215,7 +231,7 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * Text Effect
+		 * Custom effect of your text.
 		 */
 		public function set effect(value : ITextEffect) : void
 		{
@@ -232,7 +248,7 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * Set if the text is a pixel font or not
+		 * Set if the text is a pixel font or not (actually it will only change the AntiAliasType)
 		 */
 		public function set pixelFont(value : Boolean) : void
 		{
@@ -246,7 +262,7 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * TextField width
+		 * TextField Width.
 		 */
 		override public function set width(value : Number) : void
 		{
@@ -258,9 +274,19 @@ package fashion.nugget.text
 		{
 			return _textField.width;
 		}
+		
+		override public function set height(value : Number) : void
+		{
+			_textField.height = value;
+		}
+		
+		override public function get height() : Number
+		{
+			return _textField.height;
+		}
 
 		/**
-		 * Length
+		 * Length of characters on your textfield
 		 */
 		public function get length() : int
 		{

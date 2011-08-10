@@ -5,6 +5,9 @@ package fashion.nugget.core
 	 */
 	public interface IDisposable
 	{
+		/**
+		 * Dispose
+		 */
 		function dispose() : void
 	}
 }

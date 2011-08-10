@@ -41,26 +41,27 @@ package fashion.nugget.nav
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-		override protected function init() : void
+
+		// ----------------------------------------------------
+		// EVENT HANDLERS
+		// ----------------------------------------------------
+		override public function init() : void
 		{
 			_watcher = new SWFAddressWatcher(_level, SWFAddressWatcher.TYPE_PATH);
 			_watcher.addEventListener(Event.CHANGE, onSWFAddressChange);
 			_watcher.value == null ? toDefault() : onSWFAddressChange();
 		}
-
-		// ----------------------------------------------------
-		// EVENT HANDLERS
-		// ----------------------------------------------------
+		
 		protected function onSWFAddressChange(e : Event = null) : void
 		{
-			var child : XMLList = xml.child("section").(@id == _watcher.value);
+			var child : XMLList = _xml.child("section").(@id == _watcher.value);
 
 			if (child.length() > 0)
 			{
 				if (_id == _watcher.value) return;
 				_lastId = _id;
 				_id = _watcher.value;
-				this.loader.load(new Dependencies(new XML(_xml.child("section").(@id == _id))));
+				this.nugget.loader.load(new Dependencies(new XML(_xml.child("section").(@id == _id))));
 				this.dispatchEvent(new NavigationEvent(NavigationEvent.CHANGE, false, false, _id));
 			}
 		}

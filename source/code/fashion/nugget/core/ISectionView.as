@@ -7,6 +7,9 @@ package fashion.nugget.core
 	public interface ISectionView extends INuggetView, ITransition
 	{
 		
+		/**
+		 * Section Dependencies
+		 */
 		function get dependencies() : IDependencies;
 		
 	}

@@ -13,7 +13,9 @@ package fashion.nugget.text.effects
 	 */
 	public class TypeEffect extends AbstractEffect implements ITextEffect
 	{
-
+		
+		public static var APPLY_ON_ADD : Boolean = true;
+		
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
@@ -134,9 +136,11 @@ package fashion.nugget.text.effects
 		override public function set source(value : BasicText) : void
 		{
 			_source = value;
-
-			_source.textField.text = "";
-			this.htmlText = _source.content;
+			if(APPLY_ON_ADD)
+			{
+				_source.textField.text = "";
+				this.htmlText = _source.content;
+			}
 		}
 	}
 }

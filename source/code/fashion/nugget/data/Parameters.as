@@ -6,7 +6,7 @@ package fashion.nugget.data
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
-	public class Parameters extends Object
+	public class Parameters
 	{
 
 		// ----------------------------------------------------
@@ -53,6 +53,11 @@ package fashion.nugget.data
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Parse a query string
+		 * 
+		 * @param query			Query String
+		 */
 		public function parse(query : String) : void
 		{
 			if (query.indexOf("?") == 0) query = query.slice(1, query.length);
@@ -66,12 +71,23 @@ package fashion.nugget.data
 				_params[str.slice(0, equalId)] = str.slice(equalId + 1, str.length);
 			}
 		}
-
+		
+		/**
+		 * Add a new property
+		 * 
+		 * @param key			Property key
+		 * @param value			Property value
+		 */
 		public function add(key : String, value : *) : void
 		{
 			_params[key] = value;
 		}
-
+		
+		/**
+		 * Get a new property by his key
+		 * 
+		 * @param key			Property key
+		 */
 		public function get(key : String) : *
 		{
 			return _params[key];
@@ -80,6 +96,9 @@ package fashion.nugget.data
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * All the parameters
+		 */
 		public function get params() : Dictionary
 		{
 			return params;

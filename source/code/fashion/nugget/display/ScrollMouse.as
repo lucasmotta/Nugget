@@ -1,8 +1,6 @@
-package fashion.nugget.ui
+package fashion.nugget.display
 {
 
-	import fashion.nugget.display.SpriteExtended;
-	import fashion.nugget.display.Box;
 	import fashion.nugget.util.number.limit;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
@@ -30,18 +28,20 @@ package fashion.nugget.ui
 		
 		protected var _posy : Number;
 		
-		protected var _width : Number = 200;
+		protected var _width : Number;
 		
-		protected var _height : Number = 200;
+		protected var _height : Number;
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
 		 */
-		public function ScrollMouse(content : DisplayObject)
+		public function ScrollMouse(content : DisplayObject, width : Number = 200, height : Number = 200)
 		{
 			_content = content;
+			_width = width;
+			_height = height;
 		}
 		
 		// ----------------------------------------------------
@@ -50,10 +50,11 @@ package fashion.nugget.ui
 			
 		override protected function init() : void
 		{
-			addChild(_content);
-			
 			_mask = new Box(0, _width, _height);
 			addChild(_mask);
+			
+			_content.mask = _mask;
+			addChild(_content);
 			
 			this.addEventListener(Event.ENTER_FRAME, onUpdateScroll);
 		}

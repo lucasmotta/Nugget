@@ -5,6 +5,8 @@ package fashion.nugget.display
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Create a simple squared box
 	 */
 	public class Box extends Sprite
 	{
@@ -26,19 +28,23 @@ package fashion.nugget.display
 		
 		protected var _originalHeight : Number;
 		
-		protected var _radius : Number;
+		protected var _roundness : Number;
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param color			Color of your box
+		 * @param width			Width of your box
+		 * @param height		Height of your box
 		 */
 		public function Box(color : uint, width : Number, height : Number)
 		{
 			_color = color;
 			_width = _originalWidth = width;
 			_height = _originalHeight = height;
-			_radius = 0;
+			_roundness = 0;
 			
 			redraw();
 		}
@@ -50,7 +56,7 @@ package fashion.nugget.display
 		{
 			this.graphics.clear();
 			this.graphics.beginFill(_color);
-			_radius == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _radius);
+			_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
 			this.graphics.endFill();
 		}
 		
@@ -58,7 +64,7 @@ package fashion.nugget.display
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
 		/**
-		 * Width
+		 * Box width
 		 */
 		override public function set width(value : Number) : void
 		{
@@ -73,7 +79,7 @@ package fashion.nugget.display
 		}
 		
 		/**
-		 * Height
+		 * Box height
 		 */
 		override public function set height(value : Number) : void
 		{
@@ -87,9 +93,7 @@ package fashion.nugget.display
 			return _height;
 		}
 		
-		/**
-		 * Scale X
-		 */
+		
 		override public function set scaleX(value : Number) : void
 		{
 			_width = _originalWidth * value;
@@ -102,9 +106,6 @@ package fashion.nugget.display
 			return _width / _originalWidth;
 		}
 		
-		/**
-		 * Scale Y
-		 */
 		override public function set scaleY(value : Number) : void
 		{
 			_height = _originalHeight * value;
@@ -118,7 +119,7 @@ package fashion.nugget.display
 		}
 		
 		/**
-		 * Color
+		 * Color of your box
 		 */
 		public function set color(value : uint) : void
 		{
@@ -133,18 +134,18 @@ package fashion.nugget.display
 		}
 		
 		/**
-		 * Radius
+		 * Roundness of the corners
 		 */
-		public function set radius(value : Number) : void
+		public function set roundness(value : Number) : void
 		{
-			_radius = value;
+			_roundness = value;
 			//
 			redraw();
 		}
 		
-		public function get radius() : Number
+		public function get roundness() : Number
 		{
-			return _radius;
+			return _roundness;
 		}
 
 	}

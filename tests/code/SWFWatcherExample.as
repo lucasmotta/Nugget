@@ -1,14 +1,12 @@
-package fashion.nugget.display
+package
 {
 
+	import fashion.nugget.view.View;
 
-	import flash.display.BitmapData;
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
-	 * 
-	 * Same thing as the Box, but instead of using a color, you use bitmapData as a pattern
 	 */
-	public class PatternBox extends Box
+	public class SWFWatcherExample extends View
 	{
 		
 		// ----------------------------------------------------
@@ -18,35 +16,22 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _bitmapData : BitmapData;
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
-		 * 
-		 * @param bitmapData	Pattern
-		 * @param width			Box Width
-		 * @param height		Box Height
 		 */
-		public function PatternBox(bitmapData : BitmapData, width : Number, height : Number)
+		public function SWFWatcherExample()
 		{
-			_bitmapData = bitmapData;
-			
-			super(0, width, height);
+			super();
 		}
 		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-		override protected function redraw() : void
-		{
-			this.graphics.clear();
-			this.graphics.beginBitmapFill(_bitmapData);
-			_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
-			this.graphics.endFill();
-		}
+		
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------

@@ -51,7 +51,7 @@ package fashion.nugget.i18n
 		 * Learn some content to an specific language or to all languages
 		 * 
 		 * @param content		XML
-		 * @param language		Language of your content. If you don' set any language, the content will be learned by all active languages
+		 * @param language		Language of your content. If you don't set any language, the content will be learned by all active languages
 		 */
 		public function learn(content : XML, language : String = null) : void
 		{
@@ -99,9 +99,9 @@ package fashion.nugget.i18n
 		 * @param key			Key
 		 * @param replace		Extra parameter if you want to replace anything on your key. It' very usefull when you have to set an number/indice on your string.
 		 */
-		public function spell(key : String, ...replace) : *
+		public function spell(key : String, replace : Object = null) : *
 		{
-			return currentLocale.get(printf(key, replace));
+			return currentLocale.get(replace == null ? key : printf(key, replace));
 		}
 
 		/**

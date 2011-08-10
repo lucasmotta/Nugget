@@ -2,6 +2,8 @@ package fashion.nugget.display
 {
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Simple way to create a border / stroke
 	 */
 	public class Border extends Box
 	{
@@ -22,6 +24,12 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param color			Color of you border
+		 * @param width			Border width
+		 * @param height		Border height
+		 * @param thickness		Thickness of your border
+		 * @param innerStroke	Inner stroke or outer stroke
 		 */
 		public function Border(color : uint, width : Number, height : Number, thickness : Number, innerStroke : Boolean = true)
 		{
@@ -40,13 +48,13 @@ package fashion.nugget.display
 			this.graphics.beginFill(_color);
 			if(_innerStroke)
 			{
-				_radius == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _radius);
-				_radius == 0 ? this.graphics.drawRect(_thickness, _thickness, _width - _thickness * 2, _height - _thickness * 2) : this.graphics.drawRoundRect(_thickness, _thickness, _width - _thickness * 2, _height - _thickness * 2, _radius);
+				_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
+				_roundness == 0 ? this.graphics.drawRect(_thickness, _thickness, _width - _thickness * 2, _height - _thickness * 2) : this.graphics.drawRoundRect(_thickness, _thickness, _width - _thickness * 2, _height - _thickness * 2, _roundness);
 			}
 			else
 			{
-				_radius == 0 ? this.graphics.drawRect(-_thickness, -_thickness, _width + _thickness * 2, _height + _thickness * 2) : this.graphics.drawRoundRect(-_thickness, -_thickness, _width + _thickness * 2, _height + _thickness * 2, _radius);
-				_radius == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _radius);
+				_roundness == 0 ? this.graphics.drawRect(-_thickness, -_thickness, _width + _thickness * 2, _height + _thickness * 2) : this.graphics.drawRoundRect(-_thickness, -_thickness, _width + _thickness * 2, _height + _thickness * 2, _roundness);
+				_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
 			}
 			this.graphics.endFill();
 		}
@@ -60,6 +68,9 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Border Thickness
+		 */
 		public function set thickness(value : Number) : void
 		{
 			_thickness = value;
@@ -71,5 +82,20 @@ package fashion.nugget.display
 		{
 			return _thickness;
 		}
+		
+		/**
+		 * Set if the border will be an inner or outer border
+		 */
+		public function set innerStroke(value : Boolean) : void
+		{
+			_innerStroke = value;
+		}
+		
+		public function get innerStroke() : Boolean
+		{
+			return _innerStroke;
+		}
+
+		
 	}
 }

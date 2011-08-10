@@ -138,7 +138,7 @@ Sed nec sapien dui. Vestibulum eu justo lectus, nec volutpat lacus. Sed risus ju
 		{
 			_drag = new Box(0xFFFFFF, 48, 20);
 			_drag.y = 300;
-			_drag.radius = 20;
+			_drag.roundness = 20;
 			_drag.buttonMode = true;
 			_drag.mouseChildren = false;
 			_drag.filters = [new DropShadowFilter(2, 45, 0, .2, 3, 3, 1, 3)];

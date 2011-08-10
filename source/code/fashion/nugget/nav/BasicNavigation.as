@@ -1,13 +1,13 @@
 package fashion.nugget.nav
 {
 
-	import fashion.nugget.core.ILoaderView;
 	import fashion.nugget.core.INavigation;
 	import fashion.nugget.core.INugget;
 	import fashion.nugget.events.NavigationEvent;
 	import fashion.nugget.loader.Dependencies;
 	import fashion.nugget.nav.custom.CustomDependency;
 	import fashion.nugget.nav.custom.CustomSection;
+
 	import flash.events.EventDispatcher;
 
 
@@ -23,9 +23,8 @@ package fashion.nugget.nav
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		private var _loader : ILoaderView;
-
 		private var _nugget : INugget;
+		
 
 		protected var _xml : XML;
 
@@ -45,21 +44,23 @@ package fashion.nugget.nav
 		public function BasicNavigation(xml : XML = null)
 		{
 			_xml = xml || <navigation />;
-			
-			init();
 		}
 
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-		protected function init() : void
-		{
-			
-		}
 		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Method called when the Nugget Application is ready
+		 */
+		public function init() : void
+		{
+			
+		}
+		
 		/**
 		 * Navigate to a specific section
 		 * 
@@ -71,7 +72,7 @@ package fashion.nugget.nav
 			_lastId = _id;
 			_id = id;
 
-			_loader.load(new Dependencies(new XML(_xml.child("section").(@id == _id))));
+			this.nugget.loader.load(new Dependencies(new XML(_xml.child("section").(@id == _id))));
 			this.dispatchEvent(new NavigationEvent(NavigationEvent.CHANGE, false, false, _id));
 		}
 
@@ -118,7 +119,10 @@ package fashion.nugget.nav
 
 			_xml.appendChild(node);
 		}
-
+		
+		/**
+		 * Dispose
+		 */
 		public function dispose() : void
 		{
 		}
@@ -126,6 +130,9 @@ package fashion.nugget.nav
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Get the navigation XML
+		 */
 		public function get xml() : XML
 		{
 			return _xml;
@@ -146,17 +153,10 @@ package fashion.nugget.nav
 		{
 			return _lastId;
 		}
-
-		public function get loader() : ILoaderView
-		{
-			return _loader;
-		}
-
-		public function set loader(value : ILoaderView) : void
-		{
-			_loader = value;
-		}
-
+		
+		/**
+		 * Nugget Application
+		 */
 		public function get nugget() : INugget
 		{
 			return _nugget;

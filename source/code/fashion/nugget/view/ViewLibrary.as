@@ -48,6 +48,9 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Add a new instance NuggetView to the library
+		 */
 		public function add(id : String, view : INuggetView) : void
 		{
 			_views[id] = view;
@@ -56,11 +59,17 @@ package fashion.nugget.view
 			_nugget.container.addChild(view as DisplayObject);
 		}
 
+		/**
+		 * Get a view from the library
+		 */
 		public function get(id : String) : INuggetView
 		{
 			return _views.hasOwnProperty(id) ? _views[id] : null;
 		}
-
+		
+		/**
+		 * Remove a view from the library
+		 */
 		public function remove(id : String) : void
 		{
 			var view : INuggetView = get(id);

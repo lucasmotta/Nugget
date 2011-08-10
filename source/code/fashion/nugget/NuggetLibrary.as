@@ -44,7 +44,7 @@ package fashion.nugget
 		{
 			if(!exist(id))
 			{
-				throw new Error("This application does not exists. Try using the method \"exist\" first.");
+				throw new Error("This application does not exists. Try calling the \"exist\" method first.");
 			}
 			return _library[id];
 		}

@@ -1,10 +1,9 @@
 package fashion.nugget.view
 {
 
-	import fashion.nugget.util.display.safeRemoveChild;
 	import fashion.nugget.core.IView;
+	import fashion.nugget.display.SpriteExtended;
 
-	import flash.display.Sprite;
 	import flash.events.Event;
 
 	/**
@@ -15,7 +14,7 @@ package fashion.nugget.view
 	 * – Resize method;
 	 * – Bring to front / Send to back methods
 	 */
-	public class View extends Sprite implements IView
+	public class View extends SpriteExtended implements IView
 	{
 		
 		// ----------------------------------------------------
@@ -25,7 +24,6 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _disposed : Boolean;
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
@@ -35,26 +33,22 @@ package fashion.nugget.view
 		 */
 		public function View()
 		{
-			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			
 		}
 		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
-		protected function init() : void
-		{
-			
-		}
 		
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		protected function onAddedToStage(e : Event) : void
+		override protected function onAddedToStage(e : Event) : void
 		{
-			init();
+			super.onAddedToStage(e);
+			
 			resize();
 			
-			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			stage.addEventListener(Event.RESIZE, onStageResize);
 		}
 		
@@ -65,47 +59,50 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Method called when the stage is resized
+		 */
 		public function resize() : void
 		{
 		}
 		
+		/**
+		 * Bring the view to the front
+		 */
 		public function bringToFront() : void
 		{
 			if(this.parent != null)
 			{
-				if(this.parent.contains(this)) this.parent.addChild(this);
+				if(this.parent.contains(this)) this.parent.setChildIndex(this, this.parent.numChildren - 1);
 			}
 		}
 		
+		/**
+		 * Send the view back
+		 */
 		public function sendToBack() : void
 		{
 			if(this.parent != null)
 			{
-				if(this.parent.contains(this)) this.parent.addChildAt(this, 0);
+				if(this.parent.contains(this)) this.parent.setChildIndex(this, 0);
 			}
 		}
 		
-		public function dispose() : void
+		
+		override public function dispose() : void
 		{
 			if(_disposed) return;
-			_disposed = true;
 			
 			if(this.ready)
 			{
 				stage.removeEventListener(Event.RESIZE, onStageResize);
 			}
-			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			safeRemoveChild(this);
+			super.dispose();
+			
+			_disposed = true;
 		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		/**
-		 * Returns if this view was added to the stage and it was initialized
-		 */
-		public function get ready() : Boolean
-		{
-			return this.stage != null;
-		}
 	}
 }

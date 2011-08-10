@@ -12,6 +12,9 @@ package fashion.nugget.text
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Create a multi-column text on a very simple way.
+	 * You don't have to worry about creating textFields and linking them.
 	 */
 	public class ColumnText extends Sprite
 	{
@@ -51,6 +54,10 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param content		You text content
+		 * @param format		Default TextFormat of your text
+		 * @param css			Default StyleSheet of your text
 		 */
 		public function ColumnText(content : String, format : TextFormat = null, css : StyleSheet = null)
 		{
@@ -60,7 +67,7 @@ package fashion.nugget.text
 			
 			_width = 200;
 			_height = 200;
-			_columns = 1;
+			_columns = 2;
 			_margin = 10;
 		}
 		
@@ -136,12 +143,18 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Apply the column change. It's essential to call this method every time you update something on your class
+		 */
 		public function apply() : void
 		{
 			removeText();
 			setupText();
 		}
 		
+		/**
+		 * Dispose
+		 */
 		public function dispose() : void
 		{
 			removeText();
@@ -149,10 +162,14 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Get all BasicText instances used to create the columns
+		 */
 		public function get texts() : Vector.<BasicText>
 		{
 			return _texts;
 		}
+		
 		/**
 		 * Text Content
 		 */
@@ -204,7 +221,7 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * Set if the text is a pixel font or not
+		 * Set if the text is a pixel font or not (actually it will only change the AntiAliasType)
 		 */
 		public function set pixelFont(value : Boolean) : void
 		{

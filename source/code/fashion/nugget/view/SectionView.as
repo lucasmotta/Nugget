@@ -72,7 +72,7 @@ package fashion.nugget.view
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
 		/**
-		 * Dependencies
+		 * Section Dependencies
 		 */
 		public function get dependencies() : IDependencies
 		{

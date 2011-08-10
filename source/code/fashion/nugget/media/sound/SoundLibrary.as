@@ -243,6 +243,9 @@ package fashion.nugget.media.sound
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Return if the sounds are muted or not
+		 */
 		public function get muted() : Boolean
 		{
 			return _muted;

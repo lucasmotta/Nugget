@@ -6,7 +6,6 @@ package fashion.nugget.view
 	import com.greensock.events.LoaderEvent;
 	import com.greensock.loading.LoaderMax;
 	import com.greensock.loading.core.DisplayObjectLoader;
-	import com.greensock.loading.core.LoaderCore;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -34,11 +33,14 @@ package fashion.nugget.view
 		public function LoadableView(url : String)
 		{
 			_url = url;
-
-			_loader = LoaderMax.parse(_url);
-			_loader.addEventListener(LoaderEvent.OPEN, onLoadStart);
-			_loader.addEventListener(LoaderEvent.PROGRESS, onLoadProgress);
-			_loader.addEventListener(LoaderEvent.COMPLETE, onLoadComplete);
+			
+			if(_url)
+			{
+				_loader = LoaderMax.parse(_url);
+				_loader.addEventListener(LoaderEvent.OPEN, onLoadStart);
+				_loader.addEventListener(LoaderEvent.PROGRESS, onLoadProgress);
+				_loader.addEventListener(LoaderEvent.COMPLETE, onLoadComplete);
+			}
 		}
 
 		// ----------------------------------------------------
@@ -90,11 +92,14 @@ package fashion.nugget.view
 			return _url;
 		}
 
-		public function get loader() : LoaderCore
+		public function get loader() : DisplayObjectLoader
 		{
 			return _loader;
 		}
-
+		
+		/**
+		 * Check if the loader has finished or not
+		 */
 		public function get loaded() : Boolean
 		{
 			return _loader ? _loader.rawContent != null : false;

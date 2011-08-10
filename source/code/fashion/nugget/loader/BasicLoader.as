@@ -3,7 +3,6 @@ package fashion.nugget.loader
 
 	import fashion.nugget.core.IDependencies;
 	import fashion.nugget.core.ILoaderView;
-	import fashion.nugget.core.INavigation;
 	import fashion.nugget.core.ISectionView;
 	import fashion.nugget.events.SectionEvent;
 	import fashion.nugget.view.NuggetView;
@@ -24,13 +23,14 @@ package fashion.nugget.loader
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _navigation : INavigation;
-
 		protected var _dependencies : IDependencies;
 
 		protected var _section : ISectionView;
+		
 
 		protected var _loadProgress : Number;
+		
+		protected var _waitLoader : Boolean;
 
 
 		// ----------------------------------------------------
@@ -50,6 +50,11 @@ package fashion.nugget.loader
 		protected function loadStart() : void
 		{
 			_loadProgress = 0;
+			
+			if(_dependencies == null)
+			{
+				return;
+			}
 
 			if (_dependencies.hasDependencies)
 			{
@@ -65,6 +70,11 @@ package fashion.nugget.loader
 		}
 
 		protected function loadComplete() : void
+		{
+			_waitLoader ? _section.transitionOut() : addSection();
+		}
+		
+		protected function addSection() : void
 		{
 			_section = _dependencies.section;
 			_section.nugget = this.nugget;
@@ -88,17 +98,14 @@ package fashion.nugget.loader
 		protected function onSectionClosed(e : SectionEvent) : void
 		{
 			_section = null;
-			if (_dependencies != null)
-			{
-				loadStart();
-			}
+			_waitLoader ? addSection() : loadStart();
 		}
 
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
 		/**
-		 * Start the loader
+		 * Load the section and his dependencies
 		 * 
 		 * @param dependencies			Dependencies to load (including the own section)
 		 */
@@ -110,12 +117,15 @@ package fashion.nugget.loader
 				_dependencies = null;
 			}
 			_dependencies = dependencies;
-			_section == null ? loadStart() : _section.transitionOut();
+			_section == null || _waitLoader ? loadStart() : _section.transitionOut();
 		}
 
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * The dependencies load progress. Float number between 0 and 1.
+		 */
 		public function set loadProgress(value : Number) : void
 		{
 			_loadProgress = value;
@@ -125,17 +135,25 @@ package fashion.nugget.loader
 		{
 			return _loadProgress;
 		}
-
-		public function get navigation() : INavigation
+		
+		/**
+		 * Sets whether the current section will wait the new section load, before being removed from the stage.
+		 * If you set the value as <code>false</code>, the current section will be removed and then the new section will start to load.
+		 * But if you set as <code>true</code>, the new section will load instantly. And after the load finishes is that the current section will be removed.
+		 */
+		public function set waitLoader(value : Boolean) : void
 		{
-			return _navigation;
+			_waitLoader = value;
 		}
-
-		public function set navigation(value : INavigation) : void
+		
+		public function get waitLoader() : Boolean
 		{
-			_navigation = value;
+			return _waitLoader;
 		}
-
+		
+		/**
+		 * Section dependencies
+		 */
 		public function get dependencies() : IDependencies
 		{
 			return _dependencies;

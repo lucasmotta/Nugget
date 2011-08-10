@@ -7,6 +7,9 @@ package fashion.nugget.display
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * The SpriteExtended will call the <code>init</code> method when the displayObject is added to the stage.
+	 * That's the only feature of this class but it's very useful.
 	 */
 	public class SpriteExtended extends Sprite
 	{
@@ -63,6 +66,9 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Get if the stage is available or not
+		 */
 		public function get ready() : Boolean
 		{
 			return this.stage != null;

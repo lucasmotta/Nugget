@@ -93,7 +93,8 @@ package fashion.nugget
 			{
 				_settings.apply(this);
 			}
-			//
+			_navigation.init();
+			///
 			dispatchEvent(new NuggetEvent(NuggetEvent.READY));
 		}
 		// ----------------------------------------------------
@@ -116,10 +117,7 @@ package fashion.nugget
 		public function init() : void
 		{
 			_loader.nugget = this;
-			_loader.navigation = _navigation;
-			
 			_navigation.nugget = this;
-			_navigation.loader = _loader;
 			
 			_stage = _container.stage;
 			_stage == null ? _container.addEventListener(Event.ADDED_TO_STAGE, onStageReady) : onStageReady(null);
@@ -215,6 +213,14 @@ package fashion.nugget
 		public function get soundLibrary() : ISoundLibrary
 		{
 			return _soundLibrary;
+		}
+		
+		/**
+		 * Parameters
+		 */
+		public function get parameters() : Parameters
+		{
+			return _parameters;
 		}
 		
 		/**

@@ -46,6 +46,9 @@ package fashion.nugget.media.sound
 		// ----------------------------------------------------
 		/**
 		 * @constructor
+		 * 
+		 * @param sound			Sound instance
+		 * @param volume		Default volume for your sound
 		 */
 		public function SoundItem(sound : Sound = null, volume : Number = 1)
 		{
@@ -121,7 +124,7 @@ package fashion.nugget.media.sound
 		/**
 		 * Queue the sound
 		 * 
-		 * @param autoPlay		Boolean value to set if the sound is going to start as soon as the method is called
+		 * @param autoPlay		Boolean value to set if the sound is going to start as soon as the method is called or not
 		 */
 		public function queue(autoPlay : Boolean = false) : void
 		{
@@ -196,7 +199,7 @@ package fashion.nugget.media.sound
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
 		/**
-		 * Sound object
+		 * Sound instance
 		 */
 		public function get sound() : Sound
 		{
@@ -235,8 +238,5 @@ package fashion.nugget.media.sound
 		{
 			return _channel ? _channel.position : 0;
 		}
-		// ----------------------------------------------------
-		// INTERNAL GETTERS AND SETTERS
-		// ----------------------------------------------------
 	}
 }
