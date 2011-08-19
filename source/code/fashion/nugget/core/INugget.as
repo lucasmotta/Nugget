@@ -15,6 +15,8 @@ package fashion.nugget.core
 		
 		function init() : void
 		
+		function registerSections(...sections) : void
+		
 		
 		function get id() : String
 		

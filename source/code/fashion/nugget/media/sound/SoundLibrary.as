@@ -1,11 +1,12 @@
 package fashion.nugget.media.sound
 {
 
-	import fashion.nugget.events.SoundEvent;
-	import flash.events.EventDispatcher;
+	import fashion.nugget.core.ISoundController;
 	import fashion.nugget.core.ISoundItem;
 	import fashion.nugget.core.ISoundLibrary;
+	import fashion.nugget.events.SoundEvent;
 
+	import flash.events.EventDispatcher;
 	import flash.media.Sound;
 	import flash.utils.Dictionary;
 
@@ -66,7 +67,7 @@ package fashion.nugget.media.sound
 		 */
 		public function add(id : String, sound : *) : void
 		{
-			var soundItem : SoundItem = sound is Sound ? new SoundItem(sound) : sound;
+			var soundItem : ISoundController = sound is Sound ? new SoundItem(sound) : sound;
 			if(_muted) soundItem.mute();
 			_sounds[id] = soundItem;
 		}
@@ -78,7 +79,7 @@ package fashion.nugget.media.sound
 		 */
 		public function remove(id : String) : void
 		{
-			var sound : ISoundItem = get(id);
+			var sound : ISoundController = get(id);
 			if(sound)
 			{
 				sound.dispose();
@@ -92,7 +93,7 @@ package fashion.nugget.media.sound
 		 * 
 		 * @param id			Sound identifier
 		 */
-		public function get(id : String) : ISoundItem
+		public function get(id : String) : ISoundController
 		{
 			return _sounds.hasOwnProperty(id) ? _sounds[id] : null;
 		}
@@ -115,7 +116,7 @@ package fashion.nugget.media.sound
 		 */
 		public function queue(id : String, autoPlay : Boolean = false) : void
 		{
-			get(id).queue(autoPlay);
+			ISoundItem(get(id)).queue(autoPlay);
 		}
 		
 		/**
@@ -132,11 +133,10 @@ package fashion.nugget.media.sound
 		 * Stop a specified sound
 		 * 
 		 * @param id			Sound identifier
-		 * @param clearQueue	Boolean value to clear the sound queue or not
 		 */
-		public function stop(id : String, clearQueue : Boolean = true) : void
+		public function stop(id : String) : void
 		{
-			get(id).stop(clearQueue);
+			get(id).stop();
 		}
 		
 		/**
@@ -164,7 +164,7 @@ package fashion.nugget.media.sound
 		 */
 		public function playAll() : void
 		{
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
 				sound.play();
@@ -176,12 +176,12 @@ package fashion.nugget.media.sound
 		 * 
 		 * @param clearQueue	Boolean value to clear the sound queue off all items or not
 		 */
-		public function stopAll(clearQueue : Boolean = false) : void
+		public function stopAll() : void
 		{
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
-				sound.stop(clearQueue);
+				sound.stop();
 			}
 		}
 		
@@ -190,7 +190,7 @@ package fashion.nugget.media.sound
 		 */
 		public function pauseAll() : void
 		{
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
 				sound.pause();
@@ -205,7 +205,7 @@ package fashion.nugget.media.sound
 			if(_muted) return;
 			_muted = true;
 			
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
 				sound.mute();
@@ -221,7 +221,7 @@ package fashion.nugget.media.sound
 			if(!_muted) return;
 			_muted = false;
 			
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
 				sound.unmute();
@@ -234,7 +234,7 @@ package fashion.nugget.media.sound
 		 */
 		public function dispose() : void
 		{
-			var sound : ISoundItem;
+			var sound : ISoundController;
 			for each(sound in _sounds)
 			{
 				sound.dispose();

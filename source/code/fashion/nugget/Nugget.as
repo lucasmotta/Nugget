@@ -1,6 +1,7 @@
 package fashion.nugget
 {
 
+	import fashion.nugget.util.string.printf;
 	import fashion.nugget.core.ICursor;
 	import fashion.nugget.core.ILoaderView;
 	import fashion.nugget.core.INavigation;
@@ -105,6 +106,7 @@ package fashion.nugget
 			_stage = _container.stage;
 			_stageReady = true;
 			
+			_container.addChild(_loader as DisplayObject);
 			_container.removeEventListener(Event.ADDED_TO_STAGE, onStageReady);
 			
 			ready();
@@ -114,6 +116,9 @@ package fashion.nugget
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
+		/**
+		 * Initialize the application
+		 */
 		public function init() : void
 		{
 			_loader.nugget = this;
@@ -123,6 +128,9 @@ package fashion.nugget
 			_stage == null ? _container.addEventListener(Event.ADDED_TO_STAGE, onStageReady) : onStageReady(null);
 		}
 		
+		/**
+		 * Dispose the application
+		 */
 		public function dispose() : void
 		{
 			if(_loader)
@@ -135,10 +143,19 @@ package fashion.nugget
 			}
 			NuggetLibrary.remove(_id);			
 		}
+		
+		/**
+		 * Register sections so they can be available through the method <code>getDefinitionByName()</code>
+		 * You don't have to use this method to register the section if you don't want to.
+		 */
+		public function registerSections(...sections) : void
+		{
+			
+		}
 			
 		override public function toString() : String
 		{
-			return "[Nugget id=" + _id + " container=" + _container + "]";
+			return printf("[Nugget id=%(id)s container=%(container)s]", { id:_id, container:_container });
 		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
@@ -183,7 +200,6 @@ package fashion.nugget
 		public function set loader(value : ILoaderView) : void
 		{
 			_loader = value;
-			_container.addChild(_loader as DisplayObject);
 		}
 		
 		/**

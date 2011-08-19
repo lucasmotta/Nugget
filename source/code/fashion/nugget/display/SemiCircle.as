@@ -1,12 +1,9 @@
 package fashion.nugget.display
 {
-
-	import flash.display.Sprite;
-
 	/**
 	 * @author zeh (http://zeh.com.br)
 	 */
-	public class SemiCircle extends Sprite
+	public class SemiCircle extends SpriteExtended
 	{
 
 		// ----------------------------------------------------
@@ -112,19 +109,16 @@ package fashion.nugget.display
 		{
 			return __value < __min ? __min : __value > __max ? __max : __value;
 		}
-		
+
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		
 		public function get color() : int
 		{
 			return _color;

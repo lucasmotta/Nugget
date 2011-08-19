@@ -1,14 +1,13 @@
 package fashion.nugget.display
 {
 
-	import flash.display.Sprite;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 * 
 	 * Create a simple squared box
 	 */
-	public class Box extends Sprite
+	public class Box extends SpriteExtended
 	{
 		
 		// ----------------------------------------------------

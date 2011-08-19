@@ -149,9 +149,9 @@ package fashion.nugget.media.sound
 		 * 
 		 * @param clearQueue	Boolean value to clear the sound queue or not
 		 */
-		public function stop(clearQueue : Boolean = true) : void
+		public function stop() : void
 		{
-			if (clearQueue) _soundQueue = 0;
+			_soundQueue = 0;
 			if (!_playing) return;
 			stopSound(false);
 		}

@@ -63,6 +63,20 @@ package fashion.nugget.display
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			safeRemoveChild(this);
 		}
+		
+		public function position(x : Number = undefined, y : Number = undefined) : SpriteExtended
+		{
+			if(Boolean(x)) this.x = x;
+			if(Boolean(y)) this.y = y;
+			return this;
+		}
+		
+		public function size(width : Number = undefined, height : Number = undefined) : SpriteExtended
+		{
+			if(Boolean(width)) this.width = width;
+			if(Boolean(height)) this.height = height;
+			return this;
+		}
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------

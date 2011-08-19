@@ -1,9 +1,10 @@
 package fashion.nugget.core
 {
+	import flash.events.IEventDispatcher;
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
-	public interface ISoundLibrary extends IDisposable
+	public interface ISoundLibrary extends IDisposable, IEventDispatcher
 	{
 		
 		/**
@@ -26,7 +27,7 @@ package fashion.nugget.core
 		 * 
 		 * @param id			Sound identifier
 		 */
-		function get(id : String) : ISoundItem
+		function get(id : String) : ISoundController
 		
 		
 		/**
@@ -55,9 +56,8 @@ package fashion.nugget.core
 		 * Stop a specified sound
 		 * 
 		 * @param id			Sound identifier
-		 * @param clearQueue	Boolean value to clear the sound queue or not
 		 */
-		function stop(id : String, clearQueue : Boolean = true) : void
+		function stop(id : String) : void
 		
 		/**
 		 * Mute a specified sound
@@ -80,10 +80,8 @@ package fashion.nugget.core
 		
 		/**
 		 * Stop all sounds
-		 * 
-		 * @param clearQueue	Boolean value to clear the sound queue off all items or not
 		 */
-		function stopAll(clearQueue : Boolean = true) : void
+		function stopAll() : void
 		
 		/**
 		 * Pause all sounds
