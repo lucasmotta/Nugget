@@ -45,8 +45,6 @@ package fashion.nugget.core
 		
 		function get stage() : Stage
 		
-		function get stageReady() : Boolean
-		
 		
 		function get views() : IViewLibrary
 		

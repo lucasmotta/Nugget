@@ -49,8 +49,6 @@ package fashion.nugget
 		
 		protected var _stage : Stage;
 		
-		protected var _stageReady : Boolean;
-		
 		
 		protected var _settings : Settings;
 		
@@ -90,10 +88,6 @@ package fashion.nugget
 		// ----------------------------------------------------
 		protected function ready() : void
 		{
-			if(_settings)
-			{
-				_settings.apply(this);
-			}
 			_navigation.init();
 			///
 			dispatchEvent(new NuggetEvent(NuggetEvent.READY));
@@ -104,7 +98,6 @@ package fashion.nugget
 		protected function onStageReady(e : Event) : void
 		{
 			_stage = _container.stage;
-			_stageReady = true;
 			
 			_container.addChild(_loader as DisplayObject);
 			_container.removeEventListener(Event.ADDED_TO_STAGE, onStageReady);
@@ -123,6 +116,7 @@ package fashion.nugget
 		{
 			_loader.nugget = this;
 			_navigation.nugget = this;
+			_settings.nugget = this;
 			
 			_stage = _container.stage;
 			_stage == null ? _container.addEventListener(Event.ADDED_TO_STAGE, onStageReady) : onStageReady(null);
@@ -245,14 +239,6 @@ package fashion.nugget
 		public function get stage() : Stage
 		{
 			return _stage;
-		}
-		
-		/**
-		 * Return if the stage is ready or not
-		 */
-		public function get stageReady() : Boolean
-		{
-			return _stageReady;
 		}
 		
 		/**

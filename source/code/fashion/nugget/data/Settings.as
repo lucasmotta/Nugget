@@ -1,11 +1,11 @@
 package fashion.nugget.data
 {
 
-	import fashion.nugget.Nugget;
+	import fashion.nugget.core.INugget;
 	import fashion.nugget.util.toBoolean;
 	import fashion.nugget.util.validation.isEmail;
 	import fashion.nugget.util.validation.isEmpty;
-
+	import flash.display.Stage;
 	import flash.events.ContextMenuEvent;
 	import flash.events.EventDispatcher;
 	import flash.net.URLRequest;
@@ -26,22 +26,12 @@ package fashion.nugget.data
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
+		protected var _nugget : INugget;
 		
-		protected var _nugget : Nugget;
-		
-		
+		protected var _stage : Stage;
+				
 		protected var _xml : XML;
-		
-		
-		protected var _hasStage : Boolean;
-		
-		protected var _stageAlign : String;
-		
-		protected var _stageScaleMode : String;
-		
-		
-		protected var _hasContextMenu : Boolean;
-		
+				
 		protected var _contextMenu : ContextMenu;
 		
 		// ----------------------------------------------------
@@ -52,9 +42,10 @@ package fashion.nugget.data
 		 * 
 		 * @param value				Either an URL for the XML or the XML itself
 		 */
-		public function Settings(xml : XML)
+		public function Settings(xml : XML, stage : Stage)
 		{
 			_xml = xml;
+			_stage = stage;
 		}
 		
 		// ----------------------------------------------------
@@ -62,17 +53,24 @@ package fashion.nugget.data
 		// ----------------------------------------------------
 		protected function setupStage() : void
 		{
-			_hasStage = true;
-			_stageAlign = _xml.child("stage").child("align").toString() == "default" ? "" : _xml.child("stage").child("align").toString();
-			_stageScaleMode = _xml.child("stage").child("scale").toString();
+			var stageAlign : String = _xml.child("stage").child("align").toString() == "default" ? "" : _xml.child("stage").child("align").toString();
+			var stageScaleMode : String = _xml.child("stage").child("scale").toString();
+			var stageQuality : String = _xml.child("stage").child("quality").toString();
+			
+			if(!isEmpty(stageAlign)) _stage.align = stageAlign;
+			if(!isEmpty(stageScaleMode)) _stage.scaleMode = stageScaleMode;
+			if(!isEmpty(stageQuality)) _stage.quality = stageQuality;
 		}
 		
 		protected function setupContextMenu() : void
 		{
-			_hasContextMenu = true;
-			
 			_contextMenu = new ContextMenu();
-			if(toBoolean(_xml.child("contextMenu").attribute("hideBuiltInItems"))) _contextMenu.hideBuiltInItems();
+			
+			if(toBoolean(_xml.child("contextMenu").attribute("hideBuiltInItems")))
+			{
+				_contextMenu.hideBuiltInItems();
+				_stage.showDefaultContextMenu = false;
+			}
 			
 			var i : int;
 			var list : XMLList = _xml.child("contextMenu").child("item");
@@ -85,7 +83,6 @@ package fashion.nugget.data
 				itemXML = list[i];
 				item = new ContextMenuItem(itemXML.child("caption"), toBoolean(itemXML.attribute("separatorBefore")), toBoolean(itemXML.attribute("enabled"), true), toBoolean(itemXML.attribute("visible"), true));
 				item.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onContextMenuSelected);
-				//
 				_contextMenu.customItems.push(item);
 			}
 		}
@@ -99,7 +96,7 @@ package fashion.nugget.data
 			{
 				setupStage();
 			}
-			// CONTEXTMENU
+			// CONTEXT MENU
 			if(_xml.hasOwnProperty("contextMenu"))
 			{
 				setupContextMenu();
@@ -113,6 +110,7 @@ package fashion.nugget.data
 		{
 			var link : String = _xml.child("contextMenu").child("item").(child("caption") == e.target["caption"]).child("link").toString();
 			var email : Boolean;
+			
 			if(!isEmpty(link))
 			{
 				email = isEmail(link);
@@ -120,32 +118,21 @@ package fashion.nugget.data
 				navigateToURL(new URLRequest(link), email ? null : "_blank");
 			}
 		}
+
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
-		public function apply(nugget : Nugget) : void
-		{
-			_nugget = nugget;
-			
-			parse(_xml);
-			
-			if(_hasStage)
-			{
-				nugget.stage.align = _stageAlign;
-				nugget.stage.scaleMode = _stageScaleMode;
-			}
-			if(_hasContextMenu)
-			{
-				nugget.container.contextMenu = _contextMenu;
-			}
-		}
 		
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
-		public function get nugget() : Nugget
+		public function set nugget(value : INugget) : void
 		{
-			return _nugget;
+			_nugget = value;
+			if(_contextMenu)
+			{
+				_nugget.container.contextMenu = _contextMenu;
+			}
 		}
 	}
 }

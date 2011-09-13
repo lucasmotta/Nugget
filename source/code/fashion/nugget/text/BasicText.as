@@ -4,7 +4,12 @@ package fashion.nugget.text
 
 	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.ITextEffect;
+	import fashion.nugget.util.display.safeRemoveChild;
 
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
+	import flash.display.PixelSnapping;
 	import flash.display.Sprite;
 	import flash.text.AntiAliasType;
 	import flash.text.StyleSheet;
@@ -32,6 +37,10 @@ package fashion.nugget.text
 		protected var _css : StyleSheet;
 
 		protected var _textField : TextField;
+		
+		protected var _bitmap : Bitmap;
+		
+		protected var _isBitmap : Boolean;
 
 		protected var _width : Number;
 		
@@ -101,6 +110,38 @@ package fashion.nugget.text
 		}
 		
 		/**
+		 * Clone this text instance
+		 */
+		public function clone() : BasicText
+		{
+			var txt : BasicText = new BasicText(_content, _textFormat, _css);
+			txt.pixelFont = this.pixelFont;
+			txt.multiline = this.multiline;
+			txt.width = this.width;
+			return txt;
+		}
+		
+		/**
+		 * Create a bitmap with the text drawn on it.
+		 * Userfull for when you have to animate your text
+		 */
+		public function toBitmap() : void
+		{
+			if(_bitmap)
+			{
+				safeRemoveChild(_bitmap);
+				_bitmap = null;
+			}
+			_isBitmap = true;
+			_textField.visible = false;
+			
+			_bitmap = new Bitmap(new BitmapData(_textField.width, _textField.height, true, BitmapDataChannel.ALPHA), PixelSnapping.NEVER, true);
+			_bitmap.bitmapData.draw(_textField);
+			_bitmap.scaleY = 1.001;
+			addChild(_bitmap);
+		}
+		
+		/**
 		 * Dispose
 		 */
 		public function dispose() : void
@@ -112,18 +153,6 @@ package fashion.nugget.text
 			}
 		}
 		
-		/**
-		 * Close this text instance
-		 */
-		public function clone() : BasicText
-		{
-			var txt : BasicText = new BasicText(_content, _textFormat, _css);
-			txt.pixelFont = this.pixelFont;
-			txt.multiline = this.multiline;
-			txt.width = this.width;
-			return txt;
-		}
-
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
@@ -146,6 +175,7 @@ package fashion.nugget.text
 			{
 				_textField.htmlText = value;
 			}
+			if(_isBitmap) toBitmap();
 		}
 
 		public function get htmlText() : String
@@ -167,6 +197,7 @@ package fashion.nugget.text
 			{
 				_textField.text = value;
 			}
+			if(_isBitmap) toBitmap();
 		}
 
 		public function get text() : String
@@ -195,6 +226,7 @@ package fashion.nugget.text
 				_textField.htmlText = _content;
 				_textField.height = _textField.textHeight;
 			}
+			if(_isBitmap) toBitmap();
 		}
 		
 		public function get multiline() : Boolean
@@ -209,6 +241,8 @@ package fashion.nugget.text
 		{
 			_textFormat = value;
 			_textField.defaultTextFormat = _textFormat;
+			_textField.htmlText = _textField.htmlText;
+			if(_isBitmap) toBitmap();
 		}
 
 		public function get textFormat() : TextFormat
@@ -223,6 +257,8 @@ package fashion.nugget.text
 		{
 			_css = value;
 			_textField.styleSheet = _css;
+			_textField.htmlText = _textField.htmlText;
+			if(_isBitmap) toBitmap();
 		}
 
 		public function get css() : StyleSheet
@@ -254,6 +290,8 @@ package fashion.nugget.text
 		{
 			_pixelFont = value;
 			_textField.antiAliasType = value ? AntiAliasType.NORMAL : AntiAliasType.ADVANCED;
+			
+			if(_isBitmap) toBitmap();
 		}
 		
 		public function get pixelFont() : Boolean
@@ -268,6 +306,7 @@ package fashion.nugget.text
 		{
 			_width = value;
 			if(this.multiline) _textField.width = value;
+			if(_isBitmap) toBitmap();
 		}
 			
 		override public function get width() : Number
@@ -278,6 +317,7 @@ package fashion.nugget.text
 		override public function set height(value : Number) : void
 		{
 			_textField.height = value;
+			if(_isBitmap) toBitmap();
 		}
 		
 		override public function get height() : Number
