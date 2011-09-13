@@ -11,18 +11,10 @@ package fashion.nugget.util
 	 */
 	public class Paginator extends EventDispatcher
 	{
-
-		public static const ON_FIRST_PAGE_IN : String = "firstPageIn";
-
-		public static const ON_FIRST_PAGE_OUT : String = "firstPageOut";
-
-		public static const ON_LAST_PAGE_IN : String = "lastPageIn";
-
-		public static const ON_LAST_PAGE_OUT : String = "lastPageOut";
-
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
@@ -58,28 +50,28 @@ package fashion.nugget.util
 			{
 				if(newPage < lastPage)
 				{
-					trace(Paginator.ON_FIRST_PAGE_IN);
+					dispatchEvent(new PaginatorEvent(PaginatorEvent.ON_FIRST_PAGE_IN, false, false, this.isFirst, this.isLast));
 				}
 			}
 			else
 			{
 				if(lastPage == 0)
 				{
-					trace(Paginator.ON_FIRST_PAGE_OUT);
+					dispatchEvent(new PaginatorEvent(PaginatorEvent.ON_FIRST_PAGE_OUT, false, false, this.isFirst, this.isLast));
 				}
 			}
 			if(newPage == _length - 1)
 			{
 				if(newPage > lastPage)
 				{
-					trace(Paginator.ON_LAST_PAGE_IN);
+					dispatchEvent(new PaginatorEvent(PaginatorEvent.ON_LAST_PAGE_IN, false, false, this.isFirst, this.isLast));
 				}
 			}
 			else
 			{
 				if(lastPage == _length - 1)
 				{
-					trace(Paginator.ON_LAST_PAGE_OUT);
+					dispatchEvent(new PaginatorEvent(PaginatorEvent.ON_LAST_PAGE_OUT, false, false, this.isFirst, this.isLast));
 				}
 			}
 		}

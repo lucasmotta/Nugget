@@ -46,6 +46,15 @@ package fashion.nugget.data
 		{
 			_xml = xml;
 			_stage = stage;
+			
+			if(_xml.hasOwnProperty("stage"))
+			{
+				setupStage();
+			}
+			if(_xml.hasOwnProperty("contextMenu"))
+			{
+				setupContextMenu();
+			}
 		}
 		
 		// ----------------------------------------------------
@@ -60,6 +69,8 @@ package fashion.nugget.data
 			if(!isEmpty(stageAlign)) _stage.align = stageAlign;
 			if(!isEmpty(stageScaleMode)) _stage.scaleMode = stageScaleMode;
 			if(!isEmpty(stageQuality)) _stage.quality = stageQuality;
+			
+			trace(_stage.align, _stage.scaleMode, _stage.quality);
 		}
 		
 		protected function setupContextMenu() : void
@@ -84,22 +95,6 @@ package fashion.nugget.data
 				item = new ContextMenuItem(itemXML.child("caption"), toBoolean(itemXML.attribute("separatorBefore")), toBoolean(itemXML.attribute("enabled"), true), toBoolean(itemXML.attribute("visible"), true));
 				item.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onContextMenuSelected);
 				_contextMenu.customItems.push(item);
-			}
-		}
-		
-		protected function parse(xml : XML) : void
-		{
-			_xml = xml;
-			
-			// STAGE
-			if(_xml.hasOwnProperty("stage"))
-			{
-				setupStage();
-			}
-			// CONTEXT MENU
-			if(_xml.hasOwnProperty("contextMenu"))
-			{
-				setupContextMenu();
 			}
 		}
 		
@@ -133,6 +128,11 @@ package fashion.nugget.data
 			{
 				_nugget.container.contextMenu = _contextMenu;
 			}
+		}
+
+		public function get xml() : XML
+		{
+			return _xml;
 		}
 	}
 }

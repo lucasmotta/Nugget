@@ -10,6 +10,16 @@ package fashion.nugget.events
 	{
 
 		public static const CHANGE : String = "change";
+		
+		public static const ON_FIRST_PAGE_IN : String = "firstPageIn";
+
+		public static const ON_FIRST_PAGE_OUT : String = "firstPageOut";
+
+		public static const ON_LAST_PAGE_IN : String = "lastPageIn";
+
+		public static const ON_LAST_PAGE_OUT : String = "lastPageOut";
+		
+		
 
 		protected var _isFirst : Boolean;
 
