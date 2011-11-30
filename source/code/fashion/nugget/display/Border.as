@@ -3,7 +3,7 @@ package fashion.nugget.display
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 * 
-	 * Simple way to create a border / stroke
+	 * Simple way to create a border / stroke (rectangle shape)
 	 */
 	public class Border extends Box
 	{

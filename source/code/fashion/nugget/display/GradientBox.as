@@ -6,6 +6,8 @@ package fashion.nugget.display
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Create a rectangular shape with a gradient fill
 	 */
 	public class GradientBox extends Box
 	{

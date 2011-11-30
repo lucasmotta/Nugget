@@ -136,5 +136,16 @@ package fashion.nugget.text
 			createMask();
 		}
 
+		public function get colors() : Array
+		{
+			return _colors;
+		}
+
+		public function set colors(colors : Array) : void
+		{
+			_colors = colors;
+			createMask();
+		}
+
 	}
 }

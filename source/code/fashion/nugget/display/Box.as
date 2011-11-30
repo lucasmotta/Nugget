@@ -5,7 +5,7 @@ package fashion.nugget.display
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 * 
-	 * Create a simple squared box
+	 * Create a rectangular shape
 	 */
 	public class Box extends SpriteExtended
 	{

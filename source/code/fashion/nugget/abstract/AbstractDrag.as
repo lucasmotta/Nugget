@@ -1,14 +1,14 @@
-package fashion.nugget.display
+package fashion.nugget.abstract
 {
-
-	import flash.display.BitmapData;
+	import flash.events.MouseEvent;
+	import fashion.nugget.display.SpriteExtended;
 	
 	/**
-	 * @author Lucas Motta - http://lucasmotta.com
+	 * @author Lucas Motta
 	 * 
-	 * Same thing as the Box, but instead of using a color, you use bitmapData as a pattern.
+	 * Base for a dragabble display object
 	 */
-	public class PatternBox extends Box
+	public class AbstractDrag extends SpriteExtended
 	{
 		
 		// ----------------------------------------------------
@@ -18,39 +18,49 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _bitmapData : BitmapData;
-		
+		protected var _dragging : Boolean;
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
-		 * 
-		 * @param bitmapData	Pattern
-		 * @param width			Box Width
-		 * @param height		Box Height
 		 */
-		public function PatternBox(bitmapData : BitmapData, width : Number, height : Number)
+		public function AbstractDrag()
 		{
-			_bitmapData = bitmapData;
-			
-			super(0, width, height);
 		}
 		
 		// ----------------------------------------------------
-		// PRIVATE AND PROTECTED METHODS
+		// PRIVATE AND PROTECTED METHODS	
 		// ----------------------------------------------------
-		override protected function redraw() : void
+		override protected function init() : void
 		{
-			this.graphics.clear();
-			this.graphics.beginBitmapFill(_bitmapData);
-			_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
-			this.graphics.endFill();
+			addEventListener(MouseEvent.MOUSE_DOWN, onStartDrag);
 		}
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
+		protected function onStartDrag(e : MouseEvent) : void
+		{
+			_dragging = true;
+			
+			onUpdateDrag(null);
+			
+			stage.addEventListener(MouseEvent.MOUSE_UP, onStopDrag);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onUpdateDrag);
+		}
 		
+		protected function onStopDrag(e : MouseEvent) : void
+		{
+			_dragging = false;
+			
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onStopDrag);
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onUpdateDrag);
+		}
+
+		protected function onUpdateDrag(e : MouseEvent) : void
+		{
+			
+		}
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -58,5 +68,7 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		
+
 	}
 }

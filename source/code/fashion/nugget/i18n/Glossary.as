@@ -3,12 +3,16 @@ package fashion.nugget.i18n
 
 	import fashion.nugget.events.GlossaryEvent;
 	import fashion.nugget.util.string.printf;
+
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
+	 * 
+	 * Singleton class where I store on the data, texts and xml's.
+	 * You can also use multiple language and change it in real time for all the GlossaryText.
 	 */
 	public class Glossary extends EventDispatcher
 	{
@@ -27,11 +31,29 @@ package fashion.nugget.i18n
 		protected var _texts : Dictionary = new Dictionary();
 
 		protected var _language : String = Glossary.EN;
+		
+		protected var _base : XMLList;
 
-
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
+		protected function loadCurrentLocale() : void
+		{
+			dispatchEvent(new GlossaryEvent(GlossaryEvent.LOAD_START));
+			
+			currentLocale.addEventListener(GlossaryEvent.LOAD_COMPLETED, onLoadCompleted);
+			currentLocale.load();
+		}
+
+		protected function onLoadCompleted(e : GlossaryEvent) : void
+		{
+			currentLocale.removeEventListener(GlossaryEvent.LOAD_COMPLETED, onLoadCompleted);
+			dispatchEvent(new GlossaryEvent(GlossaryEvent.LOAD_COMPLETED));
+			
+			translateAll();
+		}
+		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -42,7 +64,7 @@ package fashion.nugget.i18n
 		{
 			if (_locales[language] == null)
 			{
-				_locales[language] = new Locale(language);
+				_locales[language] = new Locale(language, _base);
 			}
 			return _locales[language];
 		}
@@ -51,7 +73,7 @@ package fashion.nugget.i18n
 		 * Learn some content to an specific language or to all languages
 		 * 
 		 * @param content		XML
-		 * @param language		Language of your content. If you don't set any language, the content will be learned by all active languages
+		 * @param language		Language of your content. If you don't set any language, the content will be learned by all active languages (usefull for global text's)
 		 */
 		public function learn(content : XML, language : String = null) : void
 		{
@@ -96,7 +118,9 @@ package fashion.nugget.i18n
 		/**
 		 * Returns the specific content of a given key
 		 * 
-		 * @param key			Key
+		 * @param key			Key.
+		 						Use # followed by a number to get the a specific node by it's indice. Example: <code>get("node.item#2)</code> will return the third "item" node (because it's starts on 0).;
+	 							Use @ followed by any value to get the attribute. Example: <code>get("node.item#2.@color)</code> will return the attribute "color" of the third "item" node;
 		 * @param replace		Extra parameter if you want to replace anything on your key. It' very usefull when you have to set an number/indice on your string.
 		 */
 		public function spell(key : String, replace : Object = null) : *
@@ -121,13 +145,22 @@ package fashion.nugget.i18n
 		{
 			for each (var item : GlossaryItem in _texts)
 			{
-				item.glossaryText.htmlText = currentLocale.get(item.key);
+				translate(item);
 			}
+			dispatchEvent(new GlossaryEvent(GlossaryEvent.TRANSLATE_COMPLETED));
 		}
 
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		/**
+		 * Get the current locale
+		 */
+		public function get currentLocale() : Locale
+		{
+			return _locales[_language];
+		}
+		
 		/**
 		 * Set the current language
 		 */
@@ -136,9 +169,8 @@ package fashion.nugget.i18n
 			if (_language == value) return;
 			_language = value;
 
-			translateAll();
-
-			this.dispatchEvent(new GlossaryEvent(GlossaryEvent.LANGUAGE_CHANGE));
+			currentLocale.loaded ? translateAll() : loadCurrentLocale();
+			dispatchEvent(new GlossaryEvent(GlossaryEvent.LANGUAGE_CHANGE));
 		}
 
 		public function get language() : String
@@ -147,11 +179,30 @@ package fashion.nugget.i18n
 		}
 
 		/**
-		 * Get the current locale
+		 * The basic structure that will be used to load and parse the files for other languages
 		 */
-		public function get currentLocale() : Locale
+		public function get base() : XMLList
 		{
-			return _locales[_language];
+			return _base;
+		}
+
+		public function set base(base : XMLList) : void
+		{
+			_base = base;
+		}
+		
+		/**
+		 * Get all the locales
+		 */
+		public function get locales() : Vector.<Locale>
+		{
+			var l : Vector.<Locale> = new Vector.<Locale>();
+			
+			for each(var item : Locale in _locales)
+			{
+				l.push(item);
+			}
+			return l;
 		}
 
 
@@ -169,17 +220,41 @@ package fashion.nugget.i18n
 			}
 			return _instance;
 		}
+		
+		public static function get instance() : Glossary
+		{
+			return Glossary.getInstance();
+		}
+
 	}
 }
-internal class Locale
+
+import fashion.nugget.Nugget;
+import fashion.nugget.events.GlossaryEvent;
+import fashion.nugget.util.string.printf;
+
+import com.greensock.events.LoaderEvent;
+import com.greensock.loading.LoaderMax;
+import com.greensock.loading.XMLLoader;
+
+import flash.events.EventDispatcher;
+
+internal class Locale extends EventDispatcher
 {
 
 	// ----------------------------------------------------
 	// PRIVATE AND PROTECTED VARIABLES
 	// ----------------------------------------------------
 	protected var _glossary : XML;
+	
+	protected var _base : XMLList;
 
 	protected var _language : String;
+	
+	
+	protected var _queue : LoaderMax;
+	
+	protected var _loaded : Boolean;
 
 
 	// ----------------------------------------------------
@@ -188,15 +263,33 @@ internal class Locale
 	/**
 	 * @constructor
 	 */
-	public function Locale(language : String) : void
+	public function Locale(language : String, base : XMLList) : void
 	{
 		_language = language;
+		_base = base;
 		_glossary = <glossary />;
+		
+		setupLoader();
 	}
 
 	// ----------------------------------------------------
 	// PRIVATE AND PROTECTED METHODS
 	// ----------------------------------------------------
+	protected function setupLoader() : void
+	{
+		var i : int;
+		var length : int = _base.length();
+		var file : String;
+		
+		_queue = new LoaderMax({ onComplete:onQueueLoadCompleted });
+		
+		for(i = 0; i < length; i++)
+		{
+			file = printf(_base[i].@url, { basepath:Nugget.basepath, language:_language });
+			_queue.append(new XMLLoader(file, { onComplete:onChildLoadCompleted }));
+		}
+	}
+	
 	protected function getId(value : String) : int
 	{
 		var index : int = value.indexOf("#");
@@ -224,15 +317,40 @@ internal class Locale
 		}
 		return null;
 	}
+	
+	// ----------------------------------------------------
+	// EVENT HANDLERS
+	// ----------------------------------------------------
+	protected function onChildLoadCompleted(e : LoaderEvent) : void
+	{
+		learn(new XML(e.target["content"]));
+	}
+	
+	protected function onQueueLoadCompleted(e : LoaderEvent) : void
+	{
+		_loaded = true;
+		dispatchEvent(new GlossaryEvent(GlossaryEvent.LOAD_COMPLETED));
+	}
 
 	// ----------------------------------------------------
 	// PUBLIC METHODS
 	// ----------------------------------------------------
+	public function load() : Boolean
+	{
+		if(_loaded) return false;
+		_queue.load();
+		return true;
+	}
+	
 	public function learn(content : XML) : void
 	{
 		_glossary.appendChild(content.children());
 	}
-
+	
+	/**
+	 * Use # followed by a number to get the a specific node by it's indice. Example: <code>get("node.item#2)</code> will return the third "item" node (because it's starts on 0).;
+	 * Use @ followed by any value to get the attribute. Example: <code>get("node.item#2.@color)</code> will return the attribute "color" of the third "item" node;
+	 */
 	public function get(key : String) : *
 	{
 		var items : Array = key.split(".");
@@ -267,5 +385,15 @@ internal class Locale
 	public function get glossary() : XML
 	{
 		return _glossary;
+	}
+
+	public function get queue() : LoaderMax
+	{
+		return _queue;
+	}
+
+	public function get loaded() : Boolean
+	{
+		return _loaded;
 	}
 }

@@ -1,6 +1,7 @@
 package fashion.nugget
 {
 
+	import fashion.nugget.util.validation.isEmpty;
 	import fashion.nugget.util.string.printf;
 	import fashion.nugget.core.ICursor;
 	import fashion.nugget.core.ILoaderView;
@@ -15,18 +16,11 @@ package fashion.nugget
 	import fashion.nugget.util.display.safeRemoveChild;
 	import fashion.nugget.view.ViewLibrary;
 
-	import com.greensock.loading.ImageLoader;
-	import com.greensock.loading.LoaderMax;
-	import com.greensock.loading.SWFLoader;
-	import com.greensock.loading.VideoLoader;
-	import com.greensock.loading.XMLLoader;
-
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-
 
 
 	/**
@@ -36,8 +30,9 @@ package fashion.nugget
 	{
 		
 		// ----------------------------------------------------
-		// PUBLIC VARIABLES
+		// STATIC VARIABLES
 		// ----------------------------------------------------
+		private static var _basepath : String = ".";
 		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
@@ -79,7 +74,6 @@ package fashion.nugget
 			_soundLibrary = SoundLibrary.getInstance();
 			_parameters = Parameters.getInstance();
 			
-			LoaderMax.activate([SWFLoader, XMLLoader, ImageLoader, VideoLoader]);
 			NuggetLibrary.add(id, this);
 		}
 		
@@ -104,7 +98,6 @@ package fashion.nugget
 			
 			ready();
 		}
-		
 		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
@@ -146,7 +139,7 @@ package fashion.nugget
 		{
 			
 		}
-			
+		
 		override public function toString() : String
 		{
 			return printf("[Nugget id=%(id)s container=%(container)s]", { id:_id, container:_container });
@@ -262,6 +255,24 @@ package fashion.nugget
 		public function get cursor() : ICursor
 		{
 			return _cursor;
+		}
+		
+		// ----------------------------------------------------
+		// STATIC GETTER AND SETTER
+		// ----------------------------------------------------
+		public static function get basepath() : String
+		{
+			return _basepath;
+		}
+		
+		public static function set basepath(value : String) : void
+		{
+			if(value.length >= 1)
+			{
+				if(value.lastIndexOf("/") == value.length - 1) value = value.slice(0, value.length - 1);
+			}
+			if(isEmpty(value)) value = ".";
+			_basepath = value;
 		}
 		
 	}

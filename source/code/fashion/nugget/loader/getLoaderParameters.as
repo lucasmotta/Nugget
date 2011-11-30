@@ -17,6 +17,7 @@ package fashion.nugget.loader
 		checkParam(xml, obj, "id", "name");
 		checkParam(xml, obj, "name");
 		checkParam(xml, obj, "type");
+		checkParam(xml, obj, "glossary");
 		
 		return obj;
 	}

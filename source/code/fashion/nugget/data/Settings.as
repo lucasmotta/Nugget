@@ -69,8 +69,6 @@ package fashion.nugget.data
 			if(!isEmpty(stageAlign)) _stage.align = stageAlign;
 			if(!isEmpty(stageScaleMode)) _stage.scaleMode = stageScaleMode;
 			if(!isEmpty(stageQuality)) _stage.quality = stageQuality;
-			
-			trace(_stage.align, _stage.scaleMode, _stage.quality);
 		}
 		
 		protected function setupContextMenu() : void

@@ -9,7 +9,6 @@ package fashion.nugget.display
 	 * @author Lucas Motta - http://lucasmotta.com
 	 * 
 	 * The SpriteExtended will call the <code>init</code> method when the displayObject is added to the stage.
-	 * That's the only feature of this class but it's very useful.
 	 */
 	public class SpriteExtended extends Sprite
 	{

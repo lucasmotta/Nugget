@@ -1,14 +1,17 @@
-package fashion.nugget.display
+package
 {
 
-	import flash.display.BitmapData;
-	
+	import fashion.nugget.display.GradientBox;
+	import fashion.nugget.display.ScrollMouse;
+	import fashion.nugget.view.View;
+
+	import flash.display.StageScaleMode;
+
 	/**
-	 * @author Lucas Motta - http://lucasmotta.com
-	 * 
-	 * Same thing as the Box, but instead of using a color, you use bitmapData as a pattern.
+	 * @author Lucas Motta
 	 */
-	public class PatternBox extends Box
+	[SWF(backgroundColor="#FFFFFF", frameRate="60", width="1000", height="700")]
+	public class ScrollMouseExample extends View
 	{
 		
 		// ----------------------------------------------------
@@ -18,34 +21,31 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
-		protected var _bitmapData : BitmapData;
-		
+		protected var _scroll : ScrollMouse;
 		// ----------------------------------------------------
 		// CONSTRUCTOR
 		// ----------------------------------------------------
 		/**
 		 * @constructor
-		 * 
-		 * @param bitmapData	Pattern
-		 * @param width			Box Width
-		 * @param height		Box Height
 		 */
-		public function PatternBox(bitmapData : BitmapData, width : Number, height : Number)
+		public function ScrollMouseExample()
 		{
-			_bitmapData = bitmapData;
-			
-			super(0, width, height);
+			super();
 		}
 		
 		// ----------------------------------------------------
-		// PRIVATE AND PROTECTED METHODS
+		// PRIVATE AND PROTECTED METHODS	
 		// ----------------------------------------------------
-		override protected function redraw() : void
+		override protected function init() : void
 		{
-			this.graphics.clear();
-			this.graphics.beginBitmapFill(_bitmapData);
-			_roundness == 0 ? this.graphics.drawRect(0, 0, _width, _height) : this.graphics.drawRoundRect(0, 0, _width, _height, _roundness);
-			this.graphics.endFill();
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			
+			var box : GradientBox = new GradientBox(2000, 800, 0, [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000]);
+			box.addChild(new GradientBox(2000, 800, 90, [0, 0], null, [0, 1]));
+			
+			_scroll = new ScrollMouse(box, 640, 480, .05);
+			_scroll.position(100, 100);
+			addChild(_scroll);
 		}
 		// ----------------------------------------------------
 		// EVENT HANDLERS
@@ -58,5 +58,6 @@ package fashion.nugget.display
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		
 	}
 }
