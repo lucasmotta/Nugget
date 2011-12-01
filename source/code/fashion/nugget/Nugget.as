@@ -9,7 +9,6 @@ package fashion.nugget
 	import fashion.nugget.core.INugget;
 	import fashion.nugget.core.ISoundLibrary;
 	import fashion.nugget.core.IViewLibrary;
-	import fashion.nugget.data.Parameters;
 	import fashion.nugget.data.Settings;
 	import fashion.nugget.events.NuggetEvent;
 	import fashion.nugget.media.sound.SoundLibrary;
@@ -44,10 +43,7 @@ package fashion.nugget
 		
 		protected var _stage : Stage;
 		
-		
 		protected var _settings : Settings;
-		
-		protected var _parameters : Parameters;
 		
 		
 		protected var _loader : ILoaderView;
@@ -72,7 +68,6 @@ package fashion.nugget
 			_container = container;
 			_views = new ViewLibrary(this);
 			_soundLibrary = SoundLibrary.getInstance();
-			_parameters = Parameters.getInstance();
 			
 			NuggetLibrary.add(id, this);
 		}
@@ -216,14 +211,6 @@ package fashion.nugget
 		public function get soundLibrary() : ISoundLibrary
 		{
 			return _soundLibrary;
-		}
-		
-		/**
-		 * Parameters
-		 */
-		public function get parameters() : Parameters
-		{
-			return _parameters;
 		}
 		
 		/**
