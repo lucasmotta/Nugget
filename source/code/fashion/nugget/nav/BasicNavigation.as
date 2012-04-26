@@ -125,6 +125,10 @@ package fashion.nugget.nav
 		 */
 		public function dispose() : void
 		{
+			_nugget = null;
+			_id = null;
+			_lastId = null;
+			_xml = null;
 		}
 
 		// ----------------------------------------------------

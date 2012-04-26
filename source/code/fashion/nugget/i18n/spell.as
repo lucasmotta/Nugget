@@ -10,6 +10,6 @@ package fashion.nugget.i18n
 	*/
 	public function spell(key : String, replace : Object = null) : *
 	{
-		return Glossary.getInstance().spell(key, replace);
+		return Glossary.instance.spell(key, replace);
 	}
 }

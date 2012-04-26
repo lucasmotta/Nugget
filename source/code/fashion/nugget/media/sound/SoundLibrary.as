@@ -39,7 +39,7 @@ package fashion.nugget.media.sound
 			_sounds = new Dictionary();
 		}
 		
-		public static function getInstance() : ISoundLibrary
+		public static function get instance() : ISoundLibrary
 		{
 			if(_instance == null)
 			{

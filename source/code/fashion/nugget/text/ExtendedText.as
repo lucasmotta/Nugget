@@ -2,9 +2,12 @@ package fashion.nugget.text
 {
 
 
+	import flashx.textLayout.formats.Direction;
 	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.ITextEffect;
 	import fashion.nugget.util.display.safeRemoveChild;
+
+	import fl.text.TLFTextField;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -13,7 +16,6 @@ package fashion.nugget.text
 	import flash.display.Sprite;
 	import flash.text.AntiAliasType;
 	import flash.text.StyleSheet;
-	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
@@ -21,13 +23,12 @@ package fashion.nugget.text
 	 * @author		Lucas Motta (http://lucasmotta.com)
 	 * @since		Jan 21, 2011
 	 */
-	public class BasicText extends Sprite implements IDisposable
+	public class ExtendedText extends Sprite implements IDisposable
 	{
 		
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
-		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
@@ -37,7 +38,7 @@ package fashion.nugget.text
 
 		protected var _css : StyleSheet;
 
-		protected var _textField : TextField;
+		protected var _textField : TLFTextField;
 		
 		protected var _bitmap : Bitmap;
 		
@@ -61,7 +62,7 @@ package fashion.nugget.text
 		 * @param format		Default TextFormat of your text
 		 * @param css			Default StyleSheet of your text
 		 */
-		public function BasicText(content : String, format : TextFormat = null, css : StyleSheet = null) : void
+		public function ExtendedText(content : String, format : TextFormat = null, css : StyleSheet = null) : void
 		{
 			_content = content;
 			_textFormat = format;
@@ -76,7 +77,7 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		protected function setupText() : void
 		{
-			_textField = new TextField();
+			_textField = new TLFTextField();
 			_textField.multiline = false;
 			_textField.embedFonts = true;
 			_textField.selectable = false;
@@ -95,6 +96,7 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -113,9 +115,9 @@ package fashion.nugget.text
 		/**
 		 * Clone this text instance
 		 */
-		public function clone() : BasicText
+		public function clone() : ExtendedText
 		{
-			var txt : BasicText = new BasicText(_content, _textFormat, _css);
+			var txt : ExtendedText = new ExtendedText(_content, _textFormat, _css);
 			txt.pixelFont = this.pixelFont;
 			txt.multiline = this.multiline;
 			txt.width = this.width;
@@ -268,23 +270,6 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * Custom effect of your text.
-		 */
-		public function set effect(value : ITextEffect) : void
-		{
-			_effect = value;
-			if(_effect)
-			{
-				_effect.source = this;
-			}
-		}
-		
-		public function get effect() : ITextEffect
-		{
-			return _effect;
-		}
-		
-		/**
 		 * Set if the text is a pixel font or not (actually it will only change the AntiAliasType)
 		 */
 		public function set pixelFont(value : Boolean) : void
@@ -337,9 +322,22 @@ package fashion.nugget.text
 		/**
 		 * Get the textField instance
 		 */
-		public function get textField() : TextField
+		public function get textField() : TLFTextField
 		{
 			return _textField;
+		}
+		
+		/**
+		 * Direction of the text-field
+		 */
+		public function set direction(value : String) : void
+		{
+			_textField.direction = value || Direction.LTR;
+		}
+		
+		public function get direction() : String
+		{
+			return _textField.direction;
 		}
 	}
 }

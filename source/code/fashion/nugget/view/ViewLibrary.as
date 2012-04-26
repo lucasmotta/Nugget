@@ -1,6 +1,7 @@
 package fashion.nugget.view
 {
 
+	import fashion.nugget.core.ICursor;
 	import fashion.nugget.Nugget;
 	import fashion.nugget.core.INuggetView;
 	import fashion.nugget.core.IViewLibrary;
@@ -19,6 +20,7 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
@@ -42,21 +44,29 @@ package fashion.nugget.view
 		// ----------------------------------------------------
 		// PRIVATE AND PROTECTED METHODS
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// EVENT HANDLERS
 		// ----------------------------------------------------
+		
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
 		/**
 		 * Add a new instance NuggetView to the library
 		 */
-		public function add(id : String, view : INuggetView) : void
+		public function add(id : String, view : INuggetView, onTop : Boolean = true) : void
 		{
 			_views[id] = view;
 			
 			view.nugget = _nugget;
-			_nugget.container.addChild(view as DisplayObject);
+			onTop ? _nugget.container.addChild(view as DisplayObject) : _nugget.container.addChildAt(view as DisplayObject, 0);
+			
+			if(_views["default-cursor"])
+			{
+				var cursor : ICursor = _views["default-cursor"];
+				cursor.parent.setChildIndex(cursor as DisplayObject, cursor.parent.numChildren - 1);
+			}
 		}
 
 		/**
@@ -78,6 +88,17 @@ package fashion.nugget.view
 				view.dispose();
 				_views[id] = null;
 				delete _views[id];
+			}
+		}
+		
+		/**
+		 * Remove and dispose all the views
+		 */
+		public function removeAll() : void
+		{
+			for(var s : String in _views)
+			{
+				remove(s);
 			}
 		}
 		// ----------------------------------------------------

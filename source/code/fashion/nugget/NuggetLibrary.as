@@ -30,7 +30,7 @@ package fashion.nugget
 		{
 			if(!exist(id))
 			{
-				trace("Seems that this application does not exists. So we can't unregister that, right? But we forgive you for now.");
+				trace("Seems that this application does not exists. So we can't unregister that, right? But we will forgive you for now.");
 				return;
 			}
 			_library[id] = null;
@@ -55,6 +55,14 @@ package fashion.nugget
 		public static function exist(id : String) : Boolean
 		{
 			return _library.hasOwnProperty(id);
+		}
+		
+		/**
+		 * The library with all applications
+		 */
+		static public function get library() : Object
+		{
+			return _library;
 		}
 	}
 }

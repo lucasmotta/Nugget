@@ -59,8 +59,8 @@ package fashion.nugget.abstract
 
 		protected function onUpdateDrag(e : MouseEvent) : void
 		{
-			
 		}
+
 		// ----------------------------------------------------
 		// PUBLIC METHODS
 		// ----------------------------------------------------
@@ -68,6 +68,10 @@ package fashion.nugget.abstract
 		// ----------------------------------------------------
 		// GETTERS AND SETTERS
 		// ----------------------------------------------------
+		public function get dragging() : Boolean
+		{
+			return _dragging;
+		}
 		
 
 	}

@@ -5,6 +5,6 @@ package fashion.nugget.i18n
 	 */
 	public function removeFromGlossary(item : GlossaryItem) : void
 	{
-		Glossary.getInstance().remove(item);
+		Glossary.instance.remove(item);
 	}
 }

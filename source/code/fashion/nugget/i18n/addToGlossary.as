@@ -5,6 +5,6 @@ package fashion.nugget.i18n
 	 */
 	public function addToGlossary(item : GlossaryItem) : GlossaryItem
 	{
-		return Glossary.getInstance().add(item);
+		return Glossary.instance.add(item);
 	}
 }

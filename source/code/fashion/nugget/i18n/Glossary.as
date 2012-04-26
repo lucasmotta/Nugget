@@ -3,7 +3,6 @@ package fashion.nugget.i18n
 
 	import fashion.nugget.events.GlossaryEvent;
 	import fashion.nugget.util.string.printf;
-
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 
@@ -210,20 +209,14 @@ package fashion.nugget.i18n
 		// SINGLETON
 		// ----------------------------------------------------
 		private static var _instance : Glossary;
-
-
-		public static function getInstance() : Glossary
+		
+		public static function get instance() : Glossary
 		{
 			if (_instance == null)
 			{
 				_instance = new Glossary();
 			}
 			return _instance;
-		}
-		
-		public static function get instance() : Glossary
-		{
-			return Glossary.getInstance();
 		}
 
 	}
@@ -232,11 +225,9 @@ package fashion.nugget.i18n
 import fashion.nugget.Nugget;
 import fashion.nugget.events.GlossaryEvent;
 import fashion.nugget.util.string.printf;
-
 import com.greensock.events.LoaderEvent;
 import com.greensock.loading.LoaderMax;
 import com.greensock.loading.XMLLoader;
-
 import flash.events.EventDispatcher;
 
 internal class Locale extends EventDispatcher
@@ -285,7 +276,7 @@ internal class Locale extends EventDispatcher
 		
 		for(i = 0; i < length; i++)
 		{
-			file = printf(_base[i].@url, { basepath:Nugget.basepath, language:_language });
+			file = printf(_base[i].@url, { language:_language, basepath:Nugget.basepath });
 			_queue.append(new XMLLoader(file, { onComplete:onChildLoadCompleted }));
 		}
 	}

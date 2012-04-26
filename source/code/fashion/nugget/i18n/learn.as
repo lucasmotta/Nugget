@@ -5,6 +5,6 @@ package fashion.nugget.i18n
 	 */
 	public function learn(content : XML, language : String = null) : void
 	{
-		Glossary.getInstance().learn(content, language);
+		Glossary.instance.learn(content, language);
 	}
 }

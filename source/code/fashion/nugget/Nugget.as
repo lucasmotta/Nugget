@@ -67,7 +67,7 @@ package fashion.nugget
 			_id = id;
 			_container = container;
 			_views = new ViewLibrary(this);
-			_soundLibrary = SoundLibrary.getInstance();
+			_soundLibrary = SoundLibrary.instance;
 			
 			NuggetLibrary.add(id, this);
 		}
@@ -118,10 +118,17 @@ package fashion.nugget
 			if(_loader)
 			{
 				_loader.dispose();
+				_loader = null;
 			}
 			if(_navigation)
 			{
 				_navigation.dispose();
+				_navigation = null;
+			}
+			if(_views)
+			{
+				_views.removeAll();
+				_views = null;
 			}
 			NuggetLibrary.remove(_id);			
 		}
