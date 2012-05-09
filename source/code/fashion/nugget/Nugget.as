@@ -1,8 +1,5 @@
 package fashion.nugget
 {
-
-	import fashion.nugget.util.validation.isEmpty;
-	import fashion.nugget.util.string.printf;
 	import fashion.nugget.core.ICursor;
 	import fashion.nugget.core.ILoaderView;
 	import fashion.nugget.core.INavigation;
@@ -13,6 +10,8 @@ package fashion.nugget
 	import fashion.nugget.events.NuggetEvent;
 	import fashion.nugget.media.sound.SoundLibrary;
 	import fashion.nugget.util.display.safeRemoveChild;
+	import fashion.nugget.util.string.printf;
+	import fashion.nugget.util.validation.isEmpty;
 	import fashion.nugget.view.ViewLibrary;
 
 	import flash.display.DisplayObject;
@@ -20,6 +19,8 @@ package fashion.nugget
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.text.Font;
+	import flash.utils.describeType;
 
 
 	/**
@@ -55,6 +56,9 @@ package fashion.nugget
 		protected var _soundLibrary : ISoundLibrary;
 		
 		protected var _cursor : ICursor;
+		
+		
+		private var _fonts : Object;
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
@@ -140,6 +144,24 @@ package fashion.nugget
 		public function registerSections(...sections) : void
 		{
 			
+		}
+		
+		/**
+		 * Register the font library
+		 */
+		public function registerFontLibrary(fontClass : Class) : void
+		{
+			if(_fonts) return;
+			_fonts = new fontClass();
+
+			var xml:XML = describeType(_fonts);
+			var list : XMLList = xml.child("variable");
+			var length : int = list.length();
+			var i : int;
+			for (i = 0; i < length; i++)
+			{
+				Font.registerFont(_fonts[list[i].@name]);
+			}
 		}
 		
 		override public function toString() : String

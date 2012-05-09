@@ -16,6 +16,8 @@ package fashion.nugget.core
 		
 		function registerSections(...sections) : void
 		
+		function registerFontLibrary(fontClass : Class) : void
+		
 		
 		function get id() : String
 		
