@@ -1,13 +1,11 @@
 package fashion.nugget.text
 {
-
-	import flash.text.StyleSheet;
 	import fashion.nugget.display.GradientBox;
 	import fashion.nugget.util.display.safeRemoveChild;
 
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	import flash.text.TextFormat;
+	import flash.text.StyleSheet;
 	import flash.text.TextLineMetrics;
 
 
@@ -33,11 +31,11 @@ package fashion.nugget.text
 		/**
 		 * @constructor
 		 */
-		public function GradientText(content : String, colors : Array, format : TextFormat = null)
+		public function GradientText(content : String, colors : Array, styleClass : String = null, customCSS : StyleSheet = null)
 		{
 			_colors = colors;
 			
-			super(content, format, css);
+			super(content, styleClass, customCSS);
 			
 			createMask();
 		}
@@ -118,9 +116,9 @@ package fashion.nugget.text
 			createMask();
 		}
 
-		override public function set textFormat(value : TextFormat) : void
+		override public function get styleClass() : String
 		{
-			super.textFormat = value;
+			return super.styleClass;
 			createMask();
 		}
 		

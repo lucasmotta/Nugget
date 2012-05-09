@@ -1,5 +1,7 @@
 package fashion.nugget.abstract
 {
+	import fashion.nugget.text.CSS;
+	import com.greensock.loading.CSSLoader;
 	import fashion.nugget.util.string.printf;
 	import fashion.nugget.Nugget;
 	import fashion.nugget.core.IAbstractApp;
@@ -74,6 +76,17 @@ package fashion.nugget.abstract
 			_settingsLoader.load(new URLRequest(Nugget.basepath + "/assets/xml/settings.xml"));
 		}
 		
+		private function setupCSSLoader() : void
+		{
+			var list : XMLList = _settings.xml.child("css");
+			var length : int = list.length();
+			
+			if(length > 0)
+			{
+				_loader.append(new CSSLoader(printf(list[0].@url, { basepath:Nugget.basepath }), { onComplete:onCSSLoaded }));
+			}
+		}
+		
 		/**
 		 * If overriden, you <strong>must</strong> call the super
 		 */
@@ -82,10 +95,11 @@ package fashion.nugget.abstract
 			_loader = new LoaderMax();
 			_loader.maxConnections = 1;
 			
-			
 			_loader.append(_glossary.currentLocale.queue);
 			_loader.append(new XMLLoader(printf(_settings.xml.child("base").child("navigation").@url, { basepath:Nugget.basepath }), { name:"xml_navigation" }));
 			_loader.append(new SWFLoader(printf(_settings.xml.child("base").child("swf").@url, { basepath:Nugget.basepath }), { name:"swf_main" }));
+			
+			setupCSSLoader();
 
 			_loader.addEventListener(LoaderEvent.OPEN, onLoadStarted);
 			_loader.addEventListener(LoaderEvent.PROGRESS, onLoadProgress);
@@ -131,6 +145,11 @@ package fashion.nugget.abstract
 			_main.navigationXML = _loader.getContent("xml_navigation");
 			_main.settings = _settings;
 			addChild(_main as DisplayObject);
+		}
+		
+		private function onCSSLoaded (e : LoaderEvent) : void
+		{
+			CSS.add("default", e.target["content"], true);
 		}
 		
 		private function onSettingsLoaded(e : Event) : void

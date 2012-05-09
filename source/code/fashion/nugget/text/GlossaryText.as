@@ -1,6 +1,5 @@
 package fashion.nugget.text
 {
-
 	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.IGlossaryText;
 	import fashion.nugget.events.GlossaryEvent;
@@ -10,7 +9,6 @@ package fashion.nugget.text
 	import fashion.nugget.i18n.spell;
 
 	import flash.text.StyleSheet;
-	import flash.text.TextFormat;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -37,15 +35,15 @@ package fashion.nugget.text
 		 * @constructor
 		 * 
 		 * @param key			Identifier of your text on the XML
-		 * @param format		Default TextFormat of your text
-		 * @param css			Default StyleSheet of your text
+		 * @param styleClass	CSS Class of your textfield
+		 * @param css			Custom StyleSheet for your textField. If you don't set any custom css, the default will be used.
 		 */
-		public function GlossaryText(key : String, format : TextFormat = null, css : StyleSheet = null)
+		public function GlossaryText(key : String, styleClass : String = null, customCSS : StyleSheet = null)
 		{
 			_glossaryItem = addToGlossary(new GlossaryItem(this, key));
 			_content = spell(_glossaryItem.key);
 
-			super(_content, format, css);
+			super(_content, styleClass, customCSS);
 		}
 
 		// ----------------------------------------------------

@@ -1,16 +1,14 @@
 package fashion.nugget.text
 {
-
-	import fashion.nugget.util.validation.isURL;
 	import fashion.nugget.util.string.trim;
 	import fashion.nugget.util.validation.isEmail;
 	import fashion.nugget.util.validation.isEmpty;
+	import fashion.nugget.util.validation.isURL;
 
 	import flash.events.FocusEvent;
 	import flash.text.StyleSheet;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
-	import flash.text.TextFormat;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -41,11 +39,11 @@ package fashion.nugget.text
 		 * @param format		Default TextFormat of your text
 		 * @param css			Default StyleSheet of your text
 		 */
-		public function InputText(content : String, format : TextFormat = null, css : StyleSheet = null)
+		public function InputText(content : String, styleClass : String = null, css : StyleSheet = null)
 		{
 			_contentType = InputText.STRING;
 			
-			super(content, format, css);
+			super(content, styleClass, css);
 		}
 		
 		// ----------------------------------------------------

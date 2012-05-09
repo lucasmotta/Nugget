@@ -1,3 +1,4 @@
+// v1.6
 package fashion.nugget
 {
 	import fashion.nugget.core.ICursor;
@@ -82,7 +83,7 @@ package fashion.nugget
 		protected function ready() : void
 		{
 			_navigation.init();
-			///
+			//
 			dispatchEvent(new NuggetEvent(NuggetEvent.READY));
 		}
 		// ----------------------------------------------------

@@ -2,6 +2,7 @@ package fashion.nugget.text
 {
 
 
+	import fashion.nugget.util.toBoolean;
 	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.ITextEffect;
 	import fashion.nugget.util.display.safeRemoveChild;
@@ -15,8 +16,6 @@ package fashion.nugget.text
 	import flash.text.StyleSheet;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
-	import flash.text.TextFormatAlign;
 	/**
 	 * @author		Lucas Motta (http://lucasmotta.com)
 	 * @since		Jan 21, 2011
@@ -33,8 +32,8 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		protected var _content : String;
 
-		protected var _textFormat : TextFormat;
-
+		protected var _styleClass : String;
+		
 		protected var _css : StyleSheet;
 
 		protected var _textField : TextField;
@@ -58,14 +57,14 @@ package fashion.nugget.text
 		 * @constructor
 		 * 
 		 * @param content		You text content
-		 * @param format		Default TextFormat of your text
-		 * @param css			Default StyleSheet of your text
+		 * @param styleClass	CSS Class of your textfield
+		 * @param css			Custom StyleSheet for your textField. If you don't set any custom css, the default will be used.
 		 */
-		public function BasicText(content : String, format : TextFormat = null, css : StyleSheet = null) : void
+		public function BasicText(content : String, styleClass : String = null, customCSS : StyleSheet = null) : void
 		{
 			_content = content;
-			_textFormat = format;
-			_css = css;
+			_styleClass = styleClass || "";
+			_css = customCSS || CSS.defaultCSS;
 			_width = 200;
 
 			setupText();
@@ -83,13 +82,24 @@ package fashion.nugget.text
 			_textField.wordWrap = false;
 			_textField.mouseWheelEnabled = false;
 			_textField.alwaysShowSelection = false;
-			if (_textFormat != null) _textField.defaultTextFormat = _textFormat;
 			if (_css != null) _textField.styleSheet = _css;
 			_textField.antiAliasType = AntiAliasType.ADVANCED;
 			_textField.autoSize = TextFieldAutoSize.LEFT;
-			_textField.htmlText = _content;
+			_textField.htmlText = setContent(_content);
 			_textField.height = _textField.textHeight;
 			addChild(_textField);
+			
+			var style : Object = _css.getStyle("." + styleClass);
+			if(style.hasOwnProperty("antiAliasThickness")) _textField.thickness = style["antiAliasThickness"];
+			if(style.hasOwnProperty("antiAliasSharpness")) _textField.sharpness = style["antiAliasSharpness"];
+			if(style.hasOwnProperty("antiAliasType")) _textField.antiAliasType = style["antiAliasType"];
+			if(style.hasOwnProperty("multiline")) this.multiline = toBoolean(style["multiline"]);
+			if(style.hasOwnProperty("bitmap")) if(toBoolean(style["bitmap"])) toBitmap();
+		}
+		
+		protected function setContent(value : String) : String
+		{
+			return _styleClass ? "<span class=\"" + _styleClass + "\">" + value + "</span>" : value;
 		}
 
 		// ----------------------------------------------------
@@ -115,7 +125,7 @@ package fashion.nugget.text
 		 */
 		public function clone() : BasicText
 		{
-			var txt : BasicText = new BasicText(_content, _textFormat, _css);
+			var txt : BasicText = new BasicText(_content, _styleClass, _css);
 			txt.pixelFont = this.pixelFont;
 			txt.multiline = this.multiline;
 			txt.width = this.width;
@@ -170,11 +180,11 @@ package fashion.nugget.text
 			_content = value;
 			if(_effect)
 			{
-				_effect.htmlText = value;
+				_effect.htmlText = setContent(_content);
 			}
 			else
 			{
-				_textField.htmlText = value;
+				_textField.htmlText = setContent(_content);
 			}
 			if(_isBitmap) toBitmap();
 		}
@@ -192,11 +202,11 @@ package fashion.nugget.text
 			_content = value;
 			if(_effect)
 			{
-				_effect.text = value;
+				_effect.text = _content;
 			}
 			else
 			{
-				_textField.text = value;
+				_textField.text = _content;
 			}
 			if(_isBitmap) toBitmap();
 		}
@@ -216,15 +226,15 @@ package fashion.nugget.text
 				_textField.wordWrap = true;
 				_textField.multiline = true;
 				_textField.width = _width;
-				_textField.autoSize = _textFormat.align == TextFormatAlign.RIGHT ? TextFieldAutoSize.RIGHT : TextFieldAutoSize.LEFT;
-				_textField.htmlText = _content;
+				_textField.autoSize = TextFieldAutoSize.LEFT;
+				_textField.htmlText = setContent(_content);
 			}
 			else
 			{
 				_textField.wordWrap = false;
 				_textField.multiline = false;
 				_textField.autoSize = TextFieldAutoSize.LEFT;
-				_textField.htmlText = _content;
+				_textField.htmlText = setContent(_content);
 				_textField.height = _textField.textHeight;
 			}
 			if(_isBitmap) toBitmap();
@@ -236,35 +246,35 @@ package fashion.nugget.text
 		}
 
 		/**
-		 * TextFormat
-		 */
-		public function set textFormat(value : TextFormat) : void
-		{
-			_textFormat = value;
-			_textField.defaultTextFormat = _textFormat;
-			_textField.htmlText = _textField.htmlText;
-			if(_isBitmap) toBitmap();
-		}
-
-		public function get textFormat() : TextFormat
-		{
-			return _textFormat;
-		}
-
-		/**
 		 * Stylesheet
 		 */
 		public function set css(value : StyleSheet) : void
 		{
 			_css = value;
 			_textField.styleSheet = _css;
-			_textField.htmlText = _textField.htmlText;
+			_textField.htmlText = setContent(_content);
 			if(_isBitmap) toBitmap();
 		}
 
 		public function get css() : StyleSheet
 		{
 			return _css;
+		}
+		
+		/**
+		 * CSS Class
+		 */
+		public function set styleClass(value : String) : void
+		{
+			_styleClass = value || "";
+			_textField.styleSheet = _css;
+			_textField.htmlText = setContent(_content);
+			if(_isBitmap) toBitmap();
+		}
+
+		public function get styleClass() : String
+		{
+			return _styleClass;
 		}
 		
 		/**

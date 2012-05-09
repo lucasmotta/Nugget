@@ -1,6 +1,5 @@
 package fashion.nugget.text
 {
-
 	import fashion.nugget.util.display.safeRemoveChild;
 
 	import flash.display.Sprite;
@@ -8,7 +7,6 @@ package fashion.nugget.text
 	import flash.text.StyleSheet;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
 
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
@@ -27,10 +25,10 @@ package fashion.nugget.text
 		// PRIVATE AND PROTECTED VARIABLES
 		// ----------------------------------------------------
 		protected var _content : String;
+		
+		protected var _styleClass : String;
 
-		protected var _textFormat : TextFormat;
-
-		protected var _css : StyleSheet;
+		protected var _customCSS : StyleSheet;
 		
 		
 		protected var _width : int;
@@ -59,11 +57,11 @@ package fashion.nugget.text
 		 * @param format		Default TextFormat of your text
 		 * @param css			Default StyleSheet of your text
 		 */
-		public function ColumnText(content : String, format : TextFormat = null, css : StyleSheet = null)
+		public function ColumnText(content : String, styleClass : String, customCSS : StyleSheet = null)
 		{
 			_content = content;
-			_textFormat = format;
-			_css = css;
+			_styleClass = styleClass;
+			_customCSS = customCSS;
 			
 			_width = 200;
 			_height = 200;
@@ -87,7 +85,7 @@ package fashion.nugget.text
 			
 			for(i = 0; i < _columns; i++)
 			{
-				text = new BasicText(columnText || _content, _textFormat, _css);
+				text = new BasicText(columnText || _content, _styleClass, _customCSS);
 				text.x = int((_columnWidth + _margin) * i);
 				text.textField.autoSize = TextFieldAutoSize.NONE;
 				text.textField.wordWrap = true;
@@ -191,33 +189,33 @@ package fashion.nugget.text
 		}
 		
 		/**
-		 * TextFormat
+		 * CSS Style
 		 */
-		public function set textFormat(value : TextFormat) : void
+		public function set styleClass(value : String) : void
 		{
-			_textFormat = value;
+			_styleClass = value;
 			
 			apply();
 		}
 
-		public function get textFormat() : TextFormat
+		public function get styleClass() : String
 		{
-			return _textFormat;
+			return _styleClass;
 		}
 
 		/**
 		 * Stylesheet
 		 */
-		public function set css(value : StyleSheet) : void
+		public function set customCSS(value : StyleSheet) : void
 		{
-			_css = value;
+			_customCSS = value;
 			
 			apply();
 		}
 
-		public function get css() : StyleSheet
+		public function get customCSS() : StyleSheet
 		{
-			return _css;
+			return _customCSS;
 		}
 		
 		/**
