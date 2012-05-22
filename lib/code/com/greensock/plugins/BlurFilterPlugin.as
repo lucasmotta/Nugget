@@ -1,15 +1,14 @@
 /**
- * VERSION: 2.0
- * DATE: 8/18/2009
- * ACTIONSCRIPT VERSION: 3.0 
- * UPDATES AND DOCUMENTATION AT: http://www.TweenMax.com
+ * VERSION: 12.0
+ * DATE: 2012-01-12
+ * AS3
+ * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.plugins {
-	import com.greensock.*;
-	
+	import com.greensock.TweenLite;
 	import flash.filters.BlurFilter;
 /**
- * Tweens a BlurFilter. The following properties are available (you only need to define the ones you want to tween):
+ * [AS3/AS2 only] Tweens a BlurFilter. The following properties are available (you only need to define the ones you want to tween):
  * <code>
  * <ul>
  * 		<li> blurX : Number [0]</li>
@@ -33,29 +32,24 @@ package com.greensock.plugins {
  * 		TweenLite.to(mc, 1, {blurFilter:{blurX:10, blurY:10}}); <br /><br />
  * </code>
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <p><strong>Copyright 2008-2012, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.</p>
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class BlurFilterPlugin extends FilterPlugin {
 		/** @private **/
-		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		/** @private **/
 		private static var _propNames:Array = ["blurX","blurY","quality"];
 		
 		/** @private **/
 		public function BlurFilterPlugin() {
-			super();
-			this.propName = "blurFilter";
-			this.overwriteProps = ["blurFilter"];
+			super("blurFilter");
 		}
 		
 		/** @private **/
-		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
-			_target = target;
-			_type = BlurFilter;
-			initFilter(value, new BlurFilter(0, 0, value.quality || 2), _propNames);
-			return true;
+		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+			return _initFilter(target, value, tween, BlurFilter, new BlurFilter(0, 0, value.quality || 2), _propNames);
 		}
 		
 	}

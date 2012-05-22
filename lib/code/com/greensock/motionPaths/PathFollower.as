@@ -1,12 +1,12 @@
 /**
- * VERSION: 0.5
+ * VERSION: 0.51
  * DATE: 2011-01-12
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.motionPaths {
 /**
- * A PathFollower is used to associate a particular target object (like a MovieClip, Point, Sprite, etc.) 
+ * [AS3 only] A PathFollower is used to associate a particular target object (like a MovieClip, Point, Sprite, etc.) 
  * with a MotionPath and it offers a tweenable <code>progress</code> property that manages positioning
  * the target on the path accordingly. The <code>progress</code> property is a value between
  * 0 and 1 where 0 is at the beginning of the path, 0.5 is in the middle, and 1 is at the end. 
@@ -18,7 +18,7 @@ import com.greensock.~~;
 import com.greensock.motionPaths.~~;
 
 //create a circle motion path at coordinates x:150, y:150 with a radius of 100
-var circle:Circle2D = new Circle2D(150, 150, 100);
+var circle:CirclePath2D = new CirclePath2D(150, 150, 100);
 
 //make the MovieClip "mc" follow the circle and start at a position of 90 degrees (this returns a PathFollower instance)
 var follower:PathFollower = circle.addFollower(mc, circle.angleToProgress(90), true);
@@ -81,7 +81,7 @@ TweenLite.to(follower, 2, {progress:circle.followerTween(follower, 200, Directio
 		 * For example, to place the object on the path at the halfway point, you could set its <code>rawProgress</code> 
 		 * to 0.5. You can tween to values that are greater than 1 or less than 0. For example, setting <code>rawProgress</code> 
 		 * to 1.2 also sets <code>progress</code> to 0.2 and setting <code>rawProgress</code> to -0.2 is the 
-		 * same as setting <code>progress</code> to 0.8. If your goal is to tween the PathFollower around a Circle2D twice 
+		 * same as setting <code>progress</code> to 0.8. If your goal is to tween the PathFollower around a CirclePath2D twice 
 		 * completely, you could just add 2 to the <code>rawProgress</code> value or use a relative value in the tween, like: <br /><br /><code>
 		 * 
 		 * TweenLite.to(myFollower, 5, {rawProgress:"2"}); //or myFollower.rawProgress + 2
@@ -105,7 +105,7 @@ TweenLite.to(follower, 2, {progress:circle.followerTween(follower, 200, Directio
 		 * to place the object on the path at the halfway point, you would set its <code>progress</code> to 0.5.
 		 * You can tween to values that are greater than 1 or less than 0 but the values are simply wrapped. 
 		 * So, for example, setting <code>progress</code> to 1.2 is the same as setting it to 0.2 and -0.2 is the 
-		 * same as 0.8. If your goal is to tween the PathFollower around a Circle2D twice completely, you could just 
+		 * same as 0.8. If your goal is to tween the PathFollower around a CirclePath2D twice completely, you could just 
 		 * add 2 to the <code>progress</code> value or use a relative value in the tween, like: <br /><br /><code>
 		 * 
 		 * TweenLite.to(myFollower, 5, {progress:"2"}); //or myFollower.progress + 2</code><br /><br />

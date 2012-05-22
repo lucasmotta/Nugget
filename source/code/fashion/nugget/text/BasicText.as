@@ -2,6 +2,7 @@ package fashion.nugget.text
 {
 
 
+	import fashion.nugget.util.string.toTitleCase;
 	import fashion.nugget.util.toBoolean;
 	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.core.ITextEffect;
@@ -23,6 +24,10 @@ package fashion.nugget.text
 	public class BasicText extends Sprite implements IDisposable
 	{
 		
+		public static const TEXT_TRANSFORM_UPPERCASE : String = "uppercase";
+		public static const TEXT_TRANSFORM_LOWERCASE : String = "lowercase";
+		public static const TEXT_TRANSFORM_CAPITALIZE : String = "capitalize";
+		public static const TEXT_TRANSFORM_NONE : String = "none";
 		// ----------------------------------------------------
 		// PUBLIC VARIABLES
 		// ----------------------------------------------------
@@ -46,6 +51,8 @@ package fashion.nugget.text
 		
 		protected var _pixelFont : Boolean;
 		
+		protected var _textTransform : String;
+		
 		
 		protected var _effect : ITextEffect;
 
@@ -66,6 +73,7 @@ package fashion.nugget.text
 			_styleClass = styleClass || "";
 			_css = customCSS || CSS.defaultCSS;
 			_width = 200;
+			_textTransform = BasicText.TEXT_TRANSFORM_NONE;
 
 			setupText();
 		}
@@ -75,6 +83,9 @@ package fashion.nugget.text
 		// ----------------------------------------------------
 		protected function setupText() : void
 		{
+			var style : Object = _css.getStyle("." + _styleClass);
+			if(style.hasOwnProperty("text-transform")) _textTransform = style["text-transform"];
+			
 			_textField = new TextField();
 			_textField.multiline = false;
 			_textField.embedFonts = true;
@@ -89,17 +100,33 @@ package fashion.nugget.text
 			_textField.height = _textField.textHeight;
 			addChild(_textField);
 			
-			var style : Object = _css.getStyle("." + styleClass);
 			if(style.hasOwnProperty("antiAliasThickness")) _textField.thickness = style["antiAliasThickness"];
 			if(style.hasOwnProperty("antiAliasSharpness")) _textField.sharpness = style["antiAliasSharpness"];
 			if(style.hasOwnProperty("antiAliasType")) _textField.antiAliasType = style["antiAliasType"];
 			if(style.hasOwnProperty("multiline")) this.multiline = toBoolean(style["multiline"]);
 			if(style.hasOwnProperty("bitmap")) if(toBoolean(style["bitmap"])) toBitmap();
+			if(style.hasOwnProperty("x")) _textField.x = style["x"];
+			if(style.hasOwnProperty("y")) _textField.y = style["y"];
+			if(style.hasOwnProperty("width")) this.width = style["width"];
+			if(style.hasOwnProperty("height")) this.height = style["height"];
+			if(style.hasOwnProperty("text_")) this.height = style["height"];
 		}
 		
-		protected function setContent(value : String) : String
+		protected function setContent(value : String, applyCSS : Boolean = true) : String
 		{
-			return _styleClass ? "<span class=\"" + _styleClass + "\">" + value + "</span>" : value;
+			switch(_textTransform)
+			{
+				case TEXT_TRANSFORM_UPPERCASE :
+					value = value.toUpperCase();
+				break;
+				case TEXT_TRANSFORM_LOWERCASE :
+					value = value.toLowerCase();
+				break;
+				case TEXT_TRANSFORM_CAPITALIZE :
+					value = toTitleCase(value);
+				break;
+			}
+			return _styleClass && applyCSS ? "<span class=\"" + _styleClass + "\">" + value + "</span>" : value;
 		}
 
 		// ----------------------------------------------------
@@ -129,6 +156,7 @@ package fashion.nugget.text
 			txt.pixelFont = this.pixelFont;
 			txt.multiline = this.multiline;
 			txt.width = this.width;
+			txt.textTransform = this.textTransform;
 			return txt;
 		}
 		
@@ -140,8 +168,7 @@ package fashion.nugget.text
 		{
 			if(_bitmap)
 			{
-				safeRemoveChild(_bitmap);
-				_bitmap = null;
+				_bitmap = safeRemoveChild(_bitmap);
 			}
 			_isBitmap = true;
 			_textField.visible = false;
@@ -202,11 +229,11 @@ package fashion.nugget.text
 			_content = value;
 			if(_effect)
 			{
-				_effect.text = _content;
+				_effect.text = setContent(_content);
 			}
 			else
 			{
-				_textField.text = _content;
+				_textField.text = setContent(_content);
 			}
 			if(_isBitmap) toBitmap();
 		}
@@ -316,7 +343,7 @@ package fashion.nugget.text
 		override public function set width(value : Number) : void
 		{
 			_width = value;
-			if(this.multiline) _textField.width = value;
+			_textField.width = value;
 			if(_isBitmap) toBitmap();
 		}
 			
@@ -350,6 +377,19 @@ package fashion.nugget.text
 		public function get textField() : TextField
 		{
 			return _textField;
+		}
+		
+		/**
+		 * Text Transform (uppercase, lowercase, capitalize, none).
+		 */
+		public function get textTransform() : String
+		{
+			return _textTransform;
+		}
+
+		public function set textTransform(textTransform : String) : void
+		{
+			_textTransform = textTransform;
 		}
 	}
 }

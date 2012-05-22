@@ -1,17 +1,17 @@
 /**
- * VERSION: 0.41 (beta)
- * DATE: 2010-12-24
+ * VERSION: 0.5
+ * DATE: 2012-02-16
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.motionPaths {
 	import flash.display.Graphics;
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-	import flash.events.Event;
 
 /**
- * A LinePath2D defines a path (using as many Points as you want) on which a PathFollower can be 
+ * [AS3 only] A LinePath2D defines a path (using as many Points as you want) on which a PathFollower can be 
  * placed and animated. A PathFollower's position along the path is described using the PathFollower's 
  * <code>progress</code> property, a value between 0 and 1 where 0 is at the beginning of the path, 
  * 0.5 is in the middle, and 1 is at the very end. To tween a PathFollower along the path, simply tween its
@@ -82,7 +82,7 @@ function createSquare(size:Number, color:uint=0xFF0000):Shape {
  * 			property which will provide better performance than tweening each follower independently.</li>
  * </ul>
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <b>Copyright 2012, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */	
@@ -379,6 +379,40 @@ function createSquare(size:Number, color:uint=0xFF0000):Shape {
 			}
 			var pp:PathPoint = _points[segment - 1];
 			return pp.progress + ((progress * pp.length) / _totalLength);
+		}
+		
+		/**
+		 * Finds the segment associated with a particular a progress value along the entire LinePath2D.
+		 * For example, to find which segment is halfway along the LinePath2D:
+		 * 
+		 * <p><code>
+		 * path.getSegment(0.5);
+		 * </code></p>
+		 * 
+		 * <p>To find the segment associated with the LinePath2D's current <code>progress</code>, simply omit the 
+		 * <code>progress</code> parameter:</p>
+		 * 
+		 * <p><code>
+		 * var curSegment = path.getSegment();
+		 * </code></p>
+		 * 
+		 * @param progress The <code>progress</code> along the entire LinePath2D (a value between 0 and 1). For example, the midpoint would be <code>getSegment(0.5);</code>.
+		 * @return An integer describing the segment number where the first is 1, second is 2, etc.
+		 */
+		public function getSegment(progress:Number=NaN):uint {
+			if (!(progress || progress == 0)) {
+				progress = _progress;
+			}
+			if (_points.length < 2) {
+				return 0;
+			}
+			var l:int = _points.length;
+			for (var i:int = 1; i < l; i++) {
+				if (progress < (_points[i] as PathPoint).progress) {
+					return i;
+				}
+			}
+			return _points.length - 1;
 		}
 		
 		/**

@@ -1,19 +1,16 @@
 package fashion.nugget.util.string
 {
+	import fashion.nugget.util.validation.isEmpty;
 	/**
 	 * @author Lucas Motta - http://lucasmotta.com
 	 */
 	public function toTitleCase(value : String) : String
 	{
-		value = value.replace(/<br.*?>/gi, " ");
-		var array : Array = value.split(" ");
-		var str : String;
-		
-		for(var i : int; i < array.length; i++)
+		if(isEmpty(value)) return value;
+		value = value.split(" ").map(function(myElement : String, myIndex : int, myArr : Array) : String
 		{
-			str = array[i];
-			array[i] = str.slice(0, 1).toUpperCase() + str.slice(1, str.length).toLowerCase();
-		}
-		return array.join(" ");
+			return myElement.substr(0, 1).toLocaleUpperCase() + myElement.substr(1);
+		}).join(" ");
+		return value;
 	}
 }

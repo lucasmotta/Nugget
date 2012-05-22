@@ -1,15 +1,14 @@
 /**
- * VERSION: 1.03
- * DATE: 10/2/2009
- * ACTIONSCRIPT VERSION: 3.0 
- * UPDATES AND DOCUMENTATION AT: http://www.TweenMax.com
+ * VERSION: 12.0
+ * DATE: 2012-01-12
+ * AS3
+ * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.plugins {
-	import com.greensock.*;
-	
-	import flash.display.*;
+	import com.greensock.TweenLite;
+	import flash.display.MovieClip;
 /**
- * Tweens a MovieClip to a particular frame label. <br /><br />
+ * [AS3/AS2 only] Tweens a MovieClip to a particular frame label. <br /><br />
  * 
  * <b>USAGE:</b><br /><br />
  * <code>
@@ -30,16 +29,16 @@ package com.greensock.plugins {
  */
 	public class FrameLabelPlugin extends FramePlugin {
 		/** @private **/
-		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		
 		/** @private **/
 		public function FrameLabelPlugin() {
 			super();
-			this.propName = "frameLabel";
+			_propName = "frameLabel";
 		}
 		
 		/** @private **/
-		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
 			if (!tween.target is MovieClip) {
 				return false;
 			}
@@ -47,14 +46,14 @@ package com.greensock.plugins {
 			this.frame = _target.currentFrame;
 			var labels:Array = _target.currentLabels, label:String = value, endFrame:int = _target.currentFrame;
 			var i:int = labels.length;
-			while (i--) {
+			while (--i > -1) {
 				if (labels[i].name == label) {
 					endFrame = labels[i].frame;
 					break;
 				}
 			}
 			if (this.frame != endFrame) {
-				addTween(this, "frame", this.frame, endFrame, "frame");
+				_addTween(this, "frame", this.frame, endFrame, "frame", true);
 			}
 			return true;
 		}

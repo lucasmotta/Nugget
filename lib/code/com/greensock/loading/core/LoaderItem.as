@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.855
- * DATE: 2011-06-27
+ * VERSION: 1.884
+ * DATE: 2011-10-06
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -22,7 +22,7 @@ package com.greensock.loading.core {
  * Please see the documentation for the other classes.
  * <br /><br />
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <b>Copyright 2012, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */	
@@ -145,14 +145,16 @@ package com.greensock.loading.core {
 				}
 			} else if (event.type == "ioError" || event.type == "securityError") {
 				if (this.vars.alternateURL != undefined && this.vars.alternateURL != "" && this.vars.alternateURL != _url) {
-					_url = this.vars.alternateURL;
-					_setRequestURL(_request, _url);
-					var request:URLRequest = new URLRequest();
-					request.data = _request.data;
-					request.method = _request.method;
-					_setRequestURL(request, _url, (!_isLocal || _url.substr(0, 4) == "http") ? "gsCacheBusterID=" + (_cacheID++) + "&purpose=audit" : "");
-					_auditStream.load(request);
 					_errorHandler(event);
+					if (_status != LoaderStatus.DISPOSED) { //it is conceivable that the user disposed the loader in an onError handler
+						_url = this.vars.alternateURL;
+						_setRequestURL(_request, _url);
+						var request:URLRequest = new URLRequest();
+						request.data = _request.data;
+						request.method = _request.method;
+						_setRequestURL(request, _url, (!_isLocal || _url.substr(0, 4) == "http") ? "gsCacheBusterID=" + (_cacheID++) + "&purpose=audit" : "");
+						_auditStream.load(request);
+					}
 					return;
 				} else {	
 					//note: a CANCEL event won't be dispatched because technically the loader wasn't officially loading - we were only briefly checking the bytesTotal with a URLStream.
@@ -167,10 +169,10 @@ package com.greensock.loading.core {
 		/** @private **/
 		override protected function _failHandler(event:Event, dispatchError:Boolean=true):void {
 			if (this.vars.alternateURL != undefined && this.vars.alternateURL != "" && !_skipAlternateURL) { //don't do (_url != vars.alternateURL) because the audit could have changed it already - that's the whole purpose of _skipAlternateURL.
+				_errorHandler(event);
 				_skipAlternateURL = true;
 				_url = "temp" + Math.random(); //in case the audit already changed the _url to vars.alternateURL, we temporarily make it something different in order to force the refresh in the url setter which skips running the code if the url is set to the same value as it previously was. 
 				this.url = this.vars.alternateURL; //also calls _load()
-				_errorHandler(event);
 			} else {
 				super._failHandler(event, dispatchError);
 			}

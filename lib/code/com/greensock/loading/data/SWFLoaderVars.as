@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.22
- * DATE: 2011-05-05
+ * VERSION: 1.23
+ * DATE: 2011-07-30
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -41,7 +41,7 @@ package com.greensock.loading.data {
  */	 
 	public class SWFLoaderVars {
 		/** @private **/
-		public static const version:Number = 1.22;
+		public static const version:Number = 1.23;
 		
 		/** @private **/
 		protected var _vars:Object;
@@ -163,7 +163,7 @@ package com.greensock.loading.data {
 			return _set("noCache", value);
 		}
 		
-		/** Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>. **/
+		/** Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>. **/
 		public function allowMalformedURL(value:Boolean):SWFLoaderVars {
 			return _set("allowMalformedURL", value);
 		}
@@ -318,7 +318,7 @@ package com.greensock.loading.data {
 		
 //---- SWFLOADER PROPERTIES ------------------------------------------------------------
 		
-		/** If <code>autoPlay</code> is <code>true</code> (the default), the swf will begin playing immediately when the <code>INIT</code> event fires. To prevent this behavior, set <code>autoPlay</code> to <code>false</code> which will also mute the swf until the SWFLoader completes. **/
+		/** If <code>autoPlay</code> is <code>true</code> (the default), the swf will begin playing immediately when the <code>INIT</code> event fires. To prevent this behavior, set <code>autoPlay</code> to <code>false</code> which will also mute the swf until the SWFLoader completes. This only calls <code>stop()</code> on the main timeline but it does not prevent scripted animations. **/
 		public function autoPlay(value:Boolean):SWFLoaderVars {
 			return _set("autoPlay", value);
 		}
@@ -350,10 +350,18 @@ package com.greensock.loading.data {
 		public function onChildFail(value:Function):SWFLoaderVars {
 			return _set("onChildFail", value);
 		}
+		/** A handler function for <code>LoaderEvent.UNCAUGHT_ERROR</code> events which are dispatched when the subloaded swf encounters an UncaughtErrorEvent meaning an Error was thrown outside of a try...catch statement. This can be useful when subloading swfs from a 3rd party that may contain errors. However, UNCAUGHT_ERROR events will only be dispatched if the parent swf is published for Flash Player 10.1 or later! See SWFLoader's <code>suppressUncaughtErrors</code> special property if you'd like to have it automatically suppress these errors. The original UncaughtErrorEvent is stored in the LoaderEvent's <code>data</code> property. So, for example, if you'd like to call <code>preventDefault()</code> on that UncaughtErrorEvent, you'd do <code>myLoaderEvent.data.preventDefault()</code>. **/
+		public function onUncaughtError(value:Function):SWFLoaderVars {
+			return _set("onUncaughtError", value);
+		}
 		
 		/** If <code>true</code>, the SWFLoader will suppress the <code>REMOVED_FROM_STAGE</code> and <code>ADDED_TO_STAGE</code> events that are normally dispatched when the subloaded swf is reparented into the ContentDisplay (this always happens in Flash when any DisplayObject that's in the display list gets reparented - SWFLoader just circumvents it by default initially to avoid common problems that could arise if the child swf is coded a certain way). For example, if your subloaded swf has this code: <code>addEventListener(Event.REMOVED_FROM_STAGE, disposeEverything)</code> and you set <code>suppressInitReparentEvents</code> to <code>false</code>, <code>disposeEverything()</code> would get called as soon as the swf inits (assuming the ContentDisplay is in the display list). **/
 		public function suppressInitReparentEvents(value:Boolean):SWFLoaderVars {
 			return _set("suppressInitReparentEvents", value);
+		}
+		/** To automatically suppress uncaught errors in the subloaded swf (errors that are thrown outside of a try...catch statement), set <code>suppressUncaughtErrors</code> to <code>true</code>, but please note that this will ONLY work if the parent swf is published to Flash Player 10.1 or later. Suppressing the UncaughtErrorEvent simply means calling its <code>preventDefault()</code> and <code>stopImmediatePropagation()</code> methods as well as preventing it from bubbling up to its parent LoaderMax/SWFLoader anscestors. If you'd rather listen for these events so that you can handle them yourself, listen for the <code>LoaderEvent.UNCAUGHT_ERROR</code> event. The original UncaughtErrorEvent instance will be stored in the LoaderEvent's <code>data</code> property. **/
+		public function suppressUncaughtErrors(value:Boolean):SWFLoaderVars {
+			return _set("suppressUncaughtErrors", value);
 		}
 		
 

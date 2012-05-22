@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.77
- * DATE: 2010-12-21
+ * VERSION: 1.87
+ * DATE: 2011-07-30
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -48,6 +48,8 @@ package com.greensock.events {
 		public static const IO_ERROR:String="ioError";
 		/** Dispatched when the loader (or one of its children) encounters a SECURITY_ERROR (see Adobe's docs for details). **/
 		public static const SECURITY_ERROR:String="securityError";
+		/** Dispatched when a swf that's loaded by a SWFLoader encounters an UncaughtErrorEvent which is basically any Error that gets thrown outside of a try...catch statement. This can be useful when subloading swfs from a 3rd party that may contain errors. However, UNCAUGHT_ERROR events will only be dispatched if the parent swf is published for Flash Player 10.1 or later! See SWFLoader's <code>suppressUncaughtErrors</code> special property if you'd like to have it automatically suppress these errors. The original UncaughtErrorEvent is stored in the LoaderEvent's <code>data</code> property. So, for example, if you'd like to call <code>preventDefault()</code> on that event, you'd do <code>myLoaderEvent.data.preventDefault()</code>. **/
+		public static const UNCAUGHT_ERROR:String="uncaughtError";
 		/** 
 		 * Dispatched when the loader unloads (which happens when either <code>unload()</code> or <code>dispose(true)</code> is called
 		 * or if a loader is canceled while in the process of loading). This can be particularly useful to listen for in a swf that was
@@ -56,7 +58,7 @@ package com.greensock.events {
 		 * 
 		 * var curParent:DisplayObjectContainer = this.parent;<br />
 		 * while (curParent) { <br />
-		 *     if (curParent.hasOwnProperty("loader")) { <br />
+		 *     if (curParent.hasOwnProperty("rawContent") &amp;&amp; curParent.hasOwnProperty("loader")) { <br />
 		 *         Object(curParent).loader.addEventListener("unload", dispose, false, 0, true); <br />
 		 *     }<br />
 		 *     curParent = curParent.parent;<br />
@@ -74,7 +76,7 @@ package com.greensock.events {
 		
 		/** For <code>ERROR, FAIL</code>, and <code>CHILD_FAIL</code> events, this text will give more details about the error or failure. **/
 		public var text:String;
-		/** Event-related data which varies based on the type of event. For example, VideoLoader dispatches a VIDEO_CUE_POINT event containing data about the cue point. **/
+		/** Event-related data which varies based on the type of event. For example, VideoLoader dispatches a VIDEO_CUE_POINT event containing data about the cue point. A SWFLoader dispatches an UNCAUGHT_ERROR event containing the original UncaughtErrorEvent instance. **/
 		public var data:*;
 		
 		/**

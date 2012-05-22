@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.851
- * DATE: 2011-04-29
+ * VERSION: 1.896
+ * DATE: 2012-01-06
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -14,6 +14,7 @@ package com.greensock.loading.display {
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
+	import flash.media.Video;
 
 /**
  * A container for visual content that is loaded by any of the following: ImageLoaders, SWFLoaders, 
@@ -37,7 +38,7 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
  * After that, all ImageLoaders, SWFLoaders, and VideoLoaders will return FlexContentDisplay objects 
  * as their <code>content</code> instead of regular ContentDisplay objects. <br /><br />
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <b>Copyright 2009-2012, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */	
@@ -68,6 +69,8 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
 		protected var _fitHeight:Number;
 		/** @private only used when crop is true - works around bugs in Flash with the way it reports getBounds() on objects with a scrollRect. **/
 		protected var _cropContainer:Sprite;
+		/** @private Primarily for Video objects which don't act like anything else - we must store the original width/height ratio in this variable so that we can properly apply scaleModes **/
+		protected var _nativeRect:Rectangle;
 		
 		/** @private A place to reference an object that should be protected from gc - this is used in VideoLoader in order to protect the NetStream object when the loader is disposed. **/
 		public var gcProtect:*;
@@ -125,14 +128,29 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
 			}
 			
 			var mc:DisplayObject = _rawContent;
-			var contentWidth:Number =  mc.width;
-			var contentHeight:Number = mc.height;
-			
-			if (_loader.hasOwnProperty("getClass")) { //for SWFLoaders, use loaderInfo.width/height so that everything is based on the stage size, not the bounding box of the DisplayObjects that happen to be on the stage (which could be much larger or smaller than the swf's stage)
-				var m:Matrix = mc.transform.matrix;
-				var loaderInfo:LoaderInfo = (mc is Loader) ? Object(mc).contentLoaderInfo : mc.loaderInfo;
-				contentWidth = loaderInfo.width * Math.abs(m.a) + loaderInfo.height * Math.abs(m.b);
-				contentHeight = loaderInfo.width * Math.abs(m.c) + loaderInfo.height * Math.abs(m.d);
+			var m:Matrix = mc.transform.matrix;
+			var nativeBounds:Object, contentWidth:Number, contentHeight:Number;
+			if (mc is Video) {//Video objects don't accurately report getBounds() - they act like their native dimension is always 160x320.
+				nativeBounds = _nativeRect;
+				contentWidth = mc.width;
+				contentHeight = mc.height;
+			} else {
+				if (mc is Loader) {
+					nativeBounds = Loader(mc).contentLoaderInfo; 
+				} else if (_loader != null && _loader.hasOwnProperty("getClass")) {
+					nativeBounds = mc.loaderInfo; //for SWFLoaders, use loaderInfo.width/height so that everything is based on the stage size, not the bounding box of the DisplayObjects that happen to be on the stage (which could be much larger or smaller than the swf's stage)
+				} else {
+					nativeBounds = mc.getBounds(mc);
+				}
+				if (nativeBounds is LoaderInfo && _loader != null && _loader.progress < 1) {
+					try {
+						contentWidth = nativeBounds.width; //if not enough of the file has loaded, this can throw a runtime error saying that the "width" isn't known yet.
+					} catch (error:Error) {
+						nativeBounds = mc.getBounds(mc);
+					}
+				}
+				contentWidth = nativeBounds.width * Math.abs(m.a) + nativeBounds.height * Math.abs(m.b);
+				contentHeight = nativeBounds.width * Math.abs(m.c) + nativeBounds.height * Math.abs(m.d);
 			}
 			
 			if (_fitWidth > 0 && _fitHeight > 0) {
@@ -144,7 +162,7 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
 				
 				if (_scaleMode != "none") {
 					var displayRatio:Number = w / h;
-					var contentRatio:Number = contentWidth / contentHeight;
+					var contentRatio:Number = nativeBounds.width / nativeBounds.height;
 					if ((contentRatio < displayRatio && _scaleMode == "proportionalInside") || (contentRatio > displayRatio && _scaleMode == "proportionalOutside")) {
 						w = h * contentRatio;
 					}
@@ -260,7 +278,7 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
 			return _scaleMode;
 		}
 		public function set scaleMode(value:String):void {
-			if (value == "none" && _rawContent != null) {
+			if (_rawContent != null) {
 				_rawContent.scaleX = _rawContent.scaleY = 1;
 			}
 			_scaleMode = value;
@@ -391,8 +409,10 @@ LoaderMax.contentDisplayClass = FlexContentDisplay;
 			_rawContent = value as DisplayObject;
 			if (_rawContent == null) {
 				return;
+			} else if (_rawContent.parent == null || (_rawContent.parent != this && _rawContent.parent != _cropContainer)) {
+				addChildAt(_rawContent as DisplayObject, 0);
 			}
-			addChildAt(_rawContent as DisplayObject, 0);
+			_nativeRect = new Rectangle(0, 0, _rawContent.width, _rawContent.height);
 			_update();
 		}
 		

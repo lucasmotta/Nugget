@@ -1,8 +1,8 @@
 /**
- * VERSION: 1.2
- * DATE: 2011-06-28
+ * VERSION: 12.0
+ * DATE: 2012-01-14
  * AS3 
- * UPDATES AND DOCS AT: http://www.TweenMax.com
+ * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.plugins {
 	import com.greensock.*;
@@ -12,7 +12,7 @@ package com.greensock.plugins {
 	import flash.geom.ColorTransform;
 	import flash.geom.Transform;
 /**
- * To change a DisplayObject's tint/color, set this to the hex value of the tint you'd like
+ * [AS3/AS2 only] To change a DisplayObject's tint/color, set this to the hex value of the tint you'd like
  * to end up at (or begin at if you're using <code>TweenMax.from()</code>). An example hex value would be <code>0xFF0000</code>.<br /><br />
  * 
  * To remove a tint completely, use the RemoveTintPlugin (after activating it, you can just set <code>removeTint:true</code>) <br /><br />
@@ -27,32 +27,28 @@ package com.greensock.plugins {
  * 		TweenLite.to(mc, 1, {tint:0xFF0000}); <br /><br />
  * </code>
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <p><strong>Copyright 2008-2012, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.</p>
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class TintPlugin extends TweenPlugin {
 		/** @private **/
-		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		/** @private **/
-		protected static var _props:Array = ["redMultiplier", "greenMultiplier", "blueMultiplier", "alphaMultiplier", "redOffset", "greenOffset", "blueOffset", "alphaOffset"];
+		protected static var _props:Array = ["redMultiplier","greenMultiplier","blueMultiplier","alphaMultiplier","redOffset","greenOffset","blueOffset","alphaOffset"];
 		
 		/** @private **/
 		protected var _transform:Transform;
 		/** @private **/
 		protected var _ct:ColorTransform;
-		/** @private **/
-		protected var _ignoreAlpha:Boolean;
 		
 		/** @private **/
 		public function TintPlugin() {
-			super();
-			this.propName = "tint"; 
-			this.overwriteProps = ["tint"];
+			super("tint,colorTransform,removeTint");
 		}
 		
 		/** @private **/
-		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
 			if (!(target is DisplayObject)) {
 				return false;
 			}
@@ -60,36 +56,30 @@ package com.greensock.plugins {
 			if (value != null && tween.vars.removeTint != true) {
 				end.color = uint(value);
 			}
-			_ignoreAlpha = true;
 			_transform = DisplayObject(target).transform;
-			init(_transform.colorTransform, end);
+			_ct = _transform.colorTransform;
+			end.alphaMultiplier = _ct.alphaMultiplier;
+			end.alphaOffset = _ct.alphaOffset;
+			_init(_ct, end);
 			return true;
 		}
 		
 		/** @private **/
-		public function init(start:ColorTransform, end:ColorTransform):void {
+		public function _init(start:ColorTransform, end:ColorTransform):void {
 			_ct = start;
-			var i:int = _props.length;
-			var p:String, cnt:int = _tweens.length;
-			while (i--) {
+			var i:int = _props.length, p:String;
+			while (--i > -1) {
 				p = _props[i];
-				if (_ct[p] != end[p]) {
-					_tweens[cnt++] = new PropTween(_ct, p, _ct[p], end[p] - _ct[p], "tint", false);
+				if (start[p] != end[p]) {
+					_addTween(start, p, start[p], end[p], "tint");
 				}
 			}
 		}
 		
 		/** @private **/
-		override public function set changeFactor(n:Number):void {
-			updateTweens(n);
-			if (_transform) {
-				if (_ignoreAlpha) {
-					var ct:ColorTransform = _transform.colorTransform;
-					_ct.alphaMultiplier = ct.alphaMultiplier;
-					_ct.alphaOffset = ct.alphaOffset;
-				}
-				_transform.colorTransform = _ct;
-			}
+		override public function setRatio(v:Number):void {
+			super.setRatio(v);
+			_transform.colorTransform = _ct;
 		}
 		
 	}

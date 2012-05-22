@@ -73,7 +73,7 @@ package fashion.nugget.abstract
 		{
 			_settingsLoader = new URLLoader();
 			_settingsLoader.addEventListener(Event.COMPLETE, onSettingsLoaded);
-			_settingsLoader.load(new URLRequest(Nugget.basepath + "/assets/xml/settings.xml"));
+			_settingsLoader.load(new URLRequest(Nugget.basepath + "/assets/xml/settings.xml?" + String(Math.random() * 100000)));
 		}
 		
 		private function setupCSSLoader() : void
@@ -83,7 +83,7 @@ package fashion.nugget.abstract
 			
 			if(length > 0)
 			{
-				_loader.append(new CSSLoader(printf(list[0].@url, { basepath:Nugget.basepath }), { onComplete:onCSSLoaded }));
+				_loader.append(new CSSLoader(printf(list[0].@url, { basepath:Nugget.basepath, cache:String(Math.random() * 100000) }), { onComplete:onCSSLoaded }));
 			}
 		}
 		
@@ -96,8 +96,8 @@ package fashion.nugget.abstract
 			_loader.maxConnections = 1;
 			
 			_loader.append(_glossary.currentLocale.queue);
-			_loader.append(new XMLLoader(printf(_settings.xml.child("base").child("navigation").@url, { basepath:Nugget.basepath }), { name:"xml_navigation" }));
-			_loader.append(new SWFLoader(printf(_settings.xml.child("base").child("swf").@url, { basepath:Nugget.basepath }), { name:"swf_main" }));
+			_loader.append(new XMLLoader(printf(_settings.xml.child("base").child("navigation").@url, { basepath:Nugget.basepath, cache:String(Math.random() * 100000) }), { name:"xml_navigation" }));
+			_loader.append(new SWFLoader(printf(_settings.xml.child("base").child("swf").@url, { basepath:Nugget.basepath, cache:String(Math.random() * 100000) }), { name:"swf_main" }));
 			
 			setupCSSLoader();
 

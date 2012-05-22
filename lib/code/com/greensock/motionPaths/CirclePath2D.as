@@ -10,7 +10,7 @@ package com.greensock.motionPaths {
 	import flash.geom.Matrix;
 
 /**
- * A CirclePath2D defines a circular path on which a PathFollower can be placed, making it simple to tween objects
+ * [AS3 only] A CirclePath2D defines a circular path on which a PathFollower can be placed, making it simple to tween objects
  * along a circle or oval (make an oval by altering the width/height/scaleX/scaleY properties). A PathFollower's 
  * position along the path is described using its <code>progress</code> property, a value between 0 and 1 where 
  * 0 is at the beginning of the path, 0.5 is in the middle, and 1 is at the very end of the path. So to tween a 

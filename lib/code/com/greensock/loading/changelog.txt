@@ -1,6 +1,175 @@
 CHANGE LOG : GREENSOCK LOADERMAX SYSTEM
 ----------------------------------------
 
+2012-04-26
+----------------------------------------
+VideoLoader			1.901
+	- Fixed issue that could cause an error to be thrown if you dispose() a VideoLoader the moment it finishes playing (inside an event handler that is handling the VideoLoader.VIDEO_COMPLETE event).
+
+2012-04-16
+----------------------------------------
+LoaderMax			1.9
+VideoLoader			1.9
+	- Added "stageVideo" special property to VideoLoader to accommodate StageVideo
+
+2012-02-24
+----------------------------------------
+LoaderMax			1.8993
+LoaderCore			1.8993
+VideoLoader			1.8993
+	- Fixed issue that caused loaders to incorrectly report their bytesLoaded as non-zero after unload() was called (after having loaded of course)
+	- Fixed issue that could cause a VideoLoader not to dispatch its VIDEO_BUFFER_FULL event if the video is seeked to a time that is closer to the end of the video than the bufferTime.
+
+2012-02-23
+----------------------------------------
+LoaderMax			1.8992
+VideoLoader			1.8992
+	- Fixed issue in VideoLoader that could cause cuePoints to be triggered when gotoVideoTime() was called even though the skipCuePoints parameter was set to true.
+
+2012-02-15
+----------------------------------------
+LoaderMax			1.8991
+VideoLoader			1.8991
+LoaderItem			1.8991
+	- Previously, VideoLoader would only dispatch one INIT event (the first time it received metaData from the NetStream). However, due to an inconsistency in Flash/NetStream, metaData is sometimes received more than once, and subsequent times carry more data. For example, the metaData may not contain cuePoints the first time, but it does the second time (this is often the case for F4V files). Therefore, VideoLoader now dispatches an INIT event every time it receives metaData. If you're looking for cuePoints, you can check the VideoLoader's metaData.cuePoints array.
+	- Fixed issue that could cause a loader to throw an error if it has an alternateURL defined and it fails and its dispose() method is called directly inside an onError handler (VERY uncommon) :)
+
+2012-01-25
+----------------------------------------
+LoaderMax			1.899
+VideoLoader			1.899
+	- Fixed issue in VideoLoader that could cause an error during its auditing process (if estimatedBytes isn't defined and auditSize in the parent LoaderMax isn't set to false). 
+
+2012-01-19
+----------------------------------------
+LoaderMax			1.898
+DisplayObjectLoader	1.898
+	- Fixed issue that could cause an ImageLoader or SWFLoader to fail during the auditing process inside a LoaderMax if the URL is from another domain and there is no crossdomain.xml policy file in place. Now it simply tries again with a higher security threshold (script access will be denied of course due to Flash's security policies).
+
+2012-01-14
+----------------------------------------
+LoaderMax			1.897
+ImageLoader			1.897
+	- Fixed issue that could cause an error if an ImageLoader with an identical url is loaded after the other has finished loading which encountered a security error (thus its rawContent was a Loader instead of a Bitmap, making it impossible to copy the BitmapData). Only happens if noCache is false.
+
+2012-01-10
+----------------------------------------
+LoaderMax			1.896
+	- Fixed issue that could cause a null object reference and/or a loader to be skipped in a LoaderMax queue in a very rare scenario where an ImageLoader is loaded after another ImageLoader with an identical URL has finished loading (and noCache is false). 
+
+2011-11-27
+----------------------------------------
+LoaderMax			1.895
+ContentDisplay		1.895
+FlexContentDisplay	1.895
+	- Fixed issue introduced in version 1.892 that caused videos not to scale correctly when using a scaleMode other than "none" or "stretch"
+
+2011-11-26
+----------------------------------------
+LoaderMax			1.894
+VideoLoader			1.894
+DisplayObjectLoader	1.894
+	- Fixed issue that could cause VideoLoader not to dispatch PLAY_PROGRESS events if you called gotoVideoTime() on every frame
+	- SWFLoaders and ImageLoaders now do not force garbage collection when dispose(false) is called (or autoDispose is set to true). 
+	- Added a DisplayObjectLoader.defaultAutoForceGC static property that you can set to false to prevent it from forcing GC whenever a SWFLoader or ImageLoader is unloaded (or dispose(true)). 
+	- Added "autoForceGC" special property recognition for SWFLoader and ImageLoader (default is true). 
+
+2011-11-17
+----------------------------------------
+LoaderMax			1.893
+VideoLoader			1.893
+ContentDisplay		1.892
+FlexContentDisplay	1.892
+	- Fixed issue that could cause a VIDEO_BUFFER_FULL event to be dispatched from VideoLoader after the video finishes playing
+	- Changed behavior of VideoLoader so that it only dispatches a PLAY_PROGRESS event after the NetStream renders its new frame (which can take a brief moment after you alter the videoProgress or gotoVideoTime()).
+	- Fixed an issue that caused ContentDisplay and FlexContentDisplay to use the wrong aspect ratio on the rawContent if the scaleMode is set to "stretch" and then either "proportionalInside" or "proportionalOutside". Again, it would ONLY happen after it was changed from "stretch". 
+	- Changed behavior of VideoLoader so that it dispatches a VIDEO_BUFFER_EMPTY event whenever the playhead is moved (like with gotoVideoTime() or changing the videoProgress) which is essentially what happens with the NetStream - it empties the buffer when the playhead moves and then dispatches a VIDEO_BUFFER_FULL event when the buffer fills from the new spot. 
+
+2011-11-03
+----------------------------------------
+LoaderMax			1.891
+XMLLoader			1.891
+VideoLoader			1.891
+	- Changed the default value of VideoLoader's autoDetachNetStream from true to false because Adobe's NetStream and/or Video classes exhibit some buggy/inconsistent behavior when trying to attach the NetStream at very particular times during the load when the Video object isn't in the display list yet. In most cases, autoDetachNetStream will work great, but it shouldn't be toggled on when the content isn't in the display list yet. 
+	- XMLLoader now recognizes the "autoDetachNetStream" property of <VideoLoader> nodes. 
+
+2011-10-20
+----------------------------------------
+LoaderMax			1.89
+ImageLoader			1.89
+	- Added new performance- and memory-enhancing behavior to ImageLoader: when you load() an ImageLoader, it will automatically check to see if another ImageLoader exists with a matching url that has already finished loading. If it finds one, it will copy that BitmapData to use in its own Bitmap in order to maximize performance and minimize memory usage. After all, why load the file again if you've already loaded it? (The exception, of course, is when the ImageLoader's noCache is set to true.)
+
+2011-10-06
+----------------------------------------
+LoaderItem			1.884
+LoaderMax			1.884
+	- When a loader with an alternateURL defined fails to load the original url, the LoaderEvent.ERROR event gets dispatched BEFORE the url is changed to the alternateURL now (previously the event was dispatched after the url was changed). 
+
+2011-09-13
+-----------------------------------------
+LoaderMax			1.883
+VideoLoader			1.883
+	- VideoLoader now correctly implements noCache:true (previously the cache-busting data wasn't added to the URL)
+	- Fixed an issue that caused a VideoLoader that was unloaded to not respect autoPlay:true when reloaded AFTER it was already completely finished playing the first time. 
+	- Worked around a bug in NetStream that could cause a VideoLoader's video not to pause quickly enough when autoDetachNetStream was set to true and it wasn't in the display list and autoPlay was set to false. 
+	- Fixed issue that could (in rare situations) cause a video to render as blank/transparent for a VERY brief moment when it was first added to the display list even though autoDetachNetStream was set to false.
+
+2011-08-19
+-----------------------------------------
+LoaderMax			1.882
+VideoLoader			1.882
+	- Fixed issue in VideoLoader that could cause a video not to display correctly if autoDetachNetStream was set to false and the video loaded in a particular way and had a particular type of encoding.
+
+2011-08-15
+-----------------------------------------
+LoaderMax			1.881
+MP3Loader			1.881
+	- Fixed issue that could cause MP3Loader to repeat from the incorrect position after it is paused during playback and then resumed (it would repeat starting from the position at which it was when playback was resumed due to a bug in Adobe's Sound class).
+
+2011-08-09
+-----------------------------------------
+LoaderMax			1.88
+XMLLoader			1.88
+	- Added the capability for XMLLoader to recognize a new "childrenVars" attribute of a <LoaderMax> node so that you can apply a common set of special properties to all its children. For example: <LoaderMax name="mainQueue" childrenVars="width:200,height:100,scaleMode:proportionalOutside,crop:true">
+
+2011-08-06
+------------------------------------------
+LoaderMax			1.872
+VideoLoader			1.872
+	- Fixed issue that could cause a VideoLoader to dispatch its VIDEO_PLAY event twice if autoPlay was initially set to false and then load() and playVideo() were called immediately.
+
+2011-08-03
+------------------------------------------
+LoaderMax			1.871
+ContentDisplay		1.871
+FlexContentDisplay	1.871
+	- Fixed issue that could cause a VideoLoader's content not to be added to the ContentDisplay (or FlexContentDisplay) properly if crop was set to true and autoDetatchNetStream was true.
+
+2011-07-30
+------------------------------------------
+LoaderMax			1.87
+SWFLoader			1.87
+LoaderCore			1.87
+DisplayObjectLoader	1.87
+LoaderEvent			1.87
+SWFLoaderVars		1.23
+	- Added UNCAUGHT_ERROR event handling for SWFLoader (FP 10.1 and later only)
+	- Added onUncaughtError and suppressUncaughtErrors special properties to SWFLoader (FP 10.1 and later only)
+	- Added new methods to SWFLoaderVars for onUncaughtError and suppressUncaughtErrors
+
+2011-07-27
+------------------------------------------
+LoaderMax			1.86
+VideoLoader			1.86
+ContentDisplay		1.86
+FlexContentDisplay	1.86
+VideoLoaderVars		1.23
+	- Added getChildAt() method to LoaderMax
+	- Added an "autoDetachNetStream" property to VideoLoader (and VideoLoaderVars) that allows you to choose whether or not it automatically attached/detaches the NetStream to/from the Video object in order to conserve memory (it is true by default)
+	- Updated VideoLoader to work around a newly discovered bug in NetStream that could cause a paused NetStream (VideoLoader) to act as though it isn't paused if it isn't attached to a Video object in the display list
+	- Made a small change to ContentDisplay and FlexContentDisplay so that they could be used independently (without a loader) if necessary, although it isn't generally recommended.
+	- Updated ASDocs
+
 2011-07-05
 ------------------------------------------
 VideoLoader			1.856

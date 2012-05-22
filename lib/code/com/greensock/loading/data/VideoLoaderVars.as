@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.22
- * DATE: 2011-05-05
+ * VERSION: 1.24
+ * DATE: 2011-11-03
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -42,7 +42,7 @@ package com.greensock.loading.data {
  */	 
 	public class VideoLoaderVars {
 		/** @private **/
-		public static const version:Number = 1.22;
+		public static const version:Number = 1.23;
 		
 		/** @private **/
 		protected var _vars:Object;
@@ -168,7 +168,7 @@ package com.greensock.loading.data {
 			return _set("noCache", value);
 		}
 		
-		/** Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>. **/
+		/** Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>. **/
 		public function allowMalformedURL(value:Boolean):VideoLoaderVars {
 			return _set("allowMalformedURL", value);
 		}
@@ -318,9 +318,15 @@ package com.greensock.loading.data {
 		
 //---- VIDEOLOADER PROPERTIES ------------------------------------------------------------
 		
-		/** The amount of time (in seconds) that should be buffered before the video can begin playing (set <code>autoPlay</code> to <code>false</code> to pause the video initially).**/
-		public function bufferTime(value:Number):VideoLoaderVars {
-			return _set("bufferTime", value);
+		
+		/** If the buffer becomes empty during playback and <code>autoAdjustBuffer</code> is <code>true</code> (the default), it will automatically attempt to adjust the NetStream's <code>bufferTime</code> based on the rate at which the video has been loading, estimating what it needs to be in order to play the rest of the video without emptying the buffer again. This can prevent the annoying problem of video playback start/stopping/starting/stopping on a system tht doesn't have enough bandwidth to adequately buffer the video. You may also set the <code>bufferTime</code> in the constructor's <code>vars</code> parameter to set the initial value. **/
+		public function autoAdjustBuffer(value:Boolean):VideoLoaderVars {
+			return _set("autoAdjustBuffer", value);
+		}
+		
+		/** If <code>true</code>, the NetStream will only be attached to the Video object (the <code>rawContent</code>) when it is in the display list (on the stage). This conserves memory but it can cause a very brief rendering delay when the content is initially added to the stage (often imperceptible). Also, if you add it to the stage when the <code>videoTime</code> is <i>after</i> its last encoded keyframe, it will render at that last keyframe. **/
+		public function autoDetachNetStream(value:Boolean):VideoLoaderVars {
+			return _set("autoDetachNetStream", value);
 		}
 		
 		/** By default, the video will begin playing as soon as it has been adequately buffered, but to prevent it from playing initially, set <code>autoPlay</code> to <code>false</code>. **/
@@ -328,14 +334,14 @@ package com.greensock.loading.data {
 			return _set("autoPlay", value);
 		}
 		
-		/** When <code>smoothing</code> is <code>true</code> (the default), smoothing will be enabled for the video which typically leads to better scaling results. **/
-		public function smoothing(value:Boolean):VideoLoaderVars {
-			return _set("smoothing", value);
+		/** When <code>true</code>, the loader will report its progress only in terms of the video's buffer which can be very convenient if, for example, you want to display loading progress for the video's buffer or tuck it into a LoaderMax with other loaders and allow the LoaderMax to dispatch its <code>COMPLETE</code> event when the buffer is full instead of waiting for the whole file to download. When <code>bufferMode</code> is <code>true</code>, the VideoLoader will dispatch its <code>COMPLETE</code> event when the buffer is full as opposed to waiting for the entire video to load. You can toggle the <code>bufferMode</code> anytime. Please read the full <code>bufferMode</code> property ASDoc description below for details about how it affects things like <code>bytesTotal</code>.**/
+		public function bufferMode(value:Boolean):VideoLoaderVars {
+			return _set("bufferMode", value);
 		}
 		
-		/** Number of times that the video should repeat. To repeat indefinitely, use -1. Default is 0. **/
-		public function repeat(value:int):VideoLoaderVars {
-			return _set("repeat", value);
+		/** The amount of time (in seconds) that should be buffered before the video can begin playing (set <code>autoPlay</code> to <code>false</code> to pause the video initially).**/
+		public function bufferTime(value:Number):VideoLoaderVars {
+			return _set("bufferTime", value);
 		}
 		
 		/** If <code>true</code>, the VideoLoader will check for a crossdomain.xml file on the remote host (only useful when loading videos from other domains - see Adobe's docs for details about NetStream's <code>checkPolicyFile</code> property). **/
@@ -343,29 +349,29 @@ package com.greensock.loading.data {
 			return _set("checkPolicyFile", value);
 		}
 		
-		/** Estimated duration of the video in seconds. VideoLoader will only use this value until it receives the necessary metaData from the video in order to accurately determine the video's duration. You do not need to specify an <code>estimatedDuration</code>, but doing so can help make the playProgress and some other values more accurate (until the metaData has loaded). It can also make the <code>progress/bytesLoaded/bytesTotal</code> more accurate when a <code>estimatedDuration</code> is defined, particularly in <code>bufferMode</code>.**/
-		public function estimatedDuration(value:Number):VideoLoaderVars {
-			return _set("estimatedDuration", value);
-		}
-		
 		/** Indicates the type of filter applied to decoded video as part of post-processing. The default value is 0, which lets the video compressor apply a deblocking filter as needed. See Adobe's <code>flash.media.Video</code> class docs for details. **/
 		public function deblocking(value:int):VideoLoaderVars {
 			return _set("deblocking", value);
 		}
 		
-		/** When <code>true</code>, the loader will report its progress only in terms of the video's buffer which can be very convenient if, for example, you want to display loading progress for the video's buffer or tuck it into a LoaderMax with other loaders and allow the LoaderMax to dispatch its <code>COMPLETE</code> event when the buffer is full instead of waiting for the whole file to download. When <code>bufferMode</code> is <code>true</code>, the VideoLoader will dispatch its <code>COMPLETE</code> event when the buffer is full as opposed to waiting for the entire video to load. You can toggle the <code>bufferMode</code> anytime. Please read the full <code>bufferMode</code> property ASDoc description below for details about how it affects things like <code>bytesTotal</code>.**/
-		public function bufferMode(value:Boolean):VideoLoaderVars {
-			return _set("bufferMode", value);
+		/** Estimated duration of the video in seconds. VideoLoader will only use this value until it receives the necessary metaData from the video in order to accurately determine the video's duration. You do not need to specify an <code>estimatedDuration</code>, but doing so can help make the playProgress and some other values more accurate (until the metaData has loaded). It can also make the <code>progress/bytesLoaded/bytesTotal</code> more accurate when a <code>estimatedDuration</code> is defined, particularly in <code>bufferMode</code>.**/
+		public function estimatedDuration(value:Number):VideoLoaderVars {
+			return _set("estimatedDuration", value);
+		}
+		
+		/** Number of times that the video should repeat. To repeat indefinitely, use -1. Default is 0. **/
+		public function repeat(value:int):VideoLoaderVars {
+			return _set("repeat", value);
+		}
+		
+		/** When <code>smoothing</code> is <code>true</code> (the default), smoothing will be enabled for the video which typically leads to better scaling results. **/
+		public function smoothing(value:Boolean):VideoLoaderVars {
+			return _set("smoothing", value);
 		}
 		
 		/** A value between 0 and 1 indicating the volume at which the video should play (default is 1).**/
 		public function volume(value:Number):VideoLoaderVars {
 			return _set("volume", value);
-		}
-		
-		/** If the buffer becomes empty during playback and <code>autoAdjustBuffer</code> is <code>true</code> (the default), it will automatically attempt to adjust the NetStream's <code>bufferTime</code> based on the rate at which the video has been loading, estimating what it needs to be in order to play the rest of the video without emptying the buffer again. This can prevent the annoying problem of video playback start/stopping/starting/stopping on a system tht doesn't have enough bandwidth to adequately buffer the video. You may also set the <code>bufferTime</code> in the constructor's <code>vars</code> parameter to set the initial value. **/
-		public function autoAdjustBuffer(value:Boolean):VideoLoaderVars {
-			return _set("autoAdjustBuffer", value);
 		}
 		
 		

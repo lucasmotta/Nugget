@@ -1,6 +1,6 @@
 /**
- * VERSION: 1.854
- * DATE: 2011-06-07
+ * VERSION: 1.881
+ * DATE: 2011-08-15
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
@@ -38,7 +38,7 @@ package com.greensock.loading {
  * 		<li><strong> noCache : Boolean</strong> - If <code>noCache</code> is <code>true</code>, a "gsCacheBusterID" parameter will be appended to the url with a random set of numbers to prevent caching (don't worry, this info is ignored when you <code>getLoader()</code> or <code>getContent()</code> by url and when you're running locally)</li>
  * 		<li><strong> estimatedBytes : uint</strong> - Initially, the loader's <code>bytesTotal</code> is set to the <code>estimatedBytes</code> value (or <code>LoaderMax.defaultEstimatedBytes</code> if one isn't defined). Then, when the loader begins loading and it can accurately determine the bytesTotal, it will do so. Setting <code>estimatedBytes</code> is optional, but the more accurate the value, the more accurate your loaders' overall progress will be initially. If the loader will be inserted into a LoaderMax instance (for queue management), its <code>auditSize</code> feature can attempt to automatically determine the <code>bytesTotal</code> at runtime (there is a slight performance penalty for this, however - see LoaderMax's documentation for details).</li>
  * 		<li><strong> requireWithRoot : DisplayObject</strong> - LoaderMax supports <i>subloading</i>, where an object can be factored into a parent's loading progress. If you want LoaderMax to require this MP3Loader as part of its parent SWFLoader's progress, you must set the <code>requireWithRoot</code> property to your swf's <code>root</code>. For example, <code>var loader:MP3Loader = new MP3Loader("audio.mp3", {name:"audio", requireWithRoot:this.root});</code></li>
- * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
+ * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
  * 		<li><strong> autoDispose : Boolean</strong> - When <code>autoDispose</code> is <code>true</code>, the loader will be disposed immediately after it completes (it calls the <code>dispose()</code> method internally after dispatching its <code>COMPLETE</code> event). This will remove any listeners that were defined in the vars object (like onComplete, onProgress, onError, onInit). Once a loader is disposed, it can no longer be found with <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> - it is essentially destroyed but its content is not unloaded (you must call <code>unload()</code> or <code>dispose(true)</code> to unload its content). The default <code>autoDispose</code> value is <code>false</code>.
  * 		
  * 		<br /><br />----EVENT HANDLER SHORTCUTS----</li>
@@ -145,6 +145,8 @@ package com.greensock.loading {
 		protected var _dispatchPlayProgress:Boolean;
 		/** @private -1 = not initted, no ID3 data, 0 = received ID3 data, 1 = fully initted **/
 		protected var _initPhase:int;
+		/** @private **/
+		protected var _repeatCount:uint;
 		
 		/** The minimum number of <code>bytesLoaded</code> to wait for before the <code>LoaderEvent.INIT</code> event is dispatched - the higher the number the more accurate the <code>duration</code> estimate will be when the INIT event is dispatched (the default value is 102400 which is 100k). The MP3's duration cannot be determined with 100% accuracy until it has completely loaded, but it is estimated with more and more accuracy as the file loads. **/
 		public var initThreshold:uint;
@@ -170,7 +172,7 @@ package com.greensock.loading {
 		 * 		<li><strong> noCache : Boolean</strong> - If <code>noCache</code> is <code>true</code>, a "gsCacheBusterID" parameter will be appended to the url with a random set of numbers to prevent caching (don't worry, this info is ignored when you <code>getLoader()</code> or <code>getContent()</code> by url and when you're running locally)</li>
 		 * 		<li><strong> estimatedBytes : uint</strong> - Initially, the loader's <code>bytesTotal</code> is set to the <code>estimatedBytes</code> value (or <code>LoaderMax.defaultEstimatedBytes</code> if one isn't defined). Then, when the loader begins loading and it can accurately determine the bytesTotal, it will do so. Setting <code>estimatedBytes</code> is optional, but the more accurate the value, the more accurate your loaders' overall progress will be initially. If the loader will be inserted into a LoaderMax instance (for queue management), its <code>auditSize</code> feature can attempt to automatically determine the <code>bytesTotal</code> at runtime (there is a slight performance penalty for this, however - see LoaderMax's documentation for details).</li>
 		 * 		<li><strong> requireWithRoot : DisplayObject</strong> - LoaderMax supports <i>subloading</i>, where an object can be factored into a parent's loading progress. If you want LoaderMax to require this MP3Loader as part of its parent SWFLoader's progress, you must set the <code>requireWithRoot</code> property to your swf's <code>root</code>. For example, <code>var loader:MP3Loader = new MP3Loader("audio.mp3", {name:"audio", requireWithRoot:this.root});</code></li>
-		 * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
+		 * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
 		 * 		<li><strong> autoDispose : Boolean</strong> - When <code>autoDispose</code> is <code>true</code>, the loader will be disposed immediately after it completes (it calls the <code>dispose()</code> method internally after dispatching its <code>COMPLETE</code> event). This will remove any listeners that were defined in the vars object (like onComplete, onProgress, onError, onInit). Once a loader is disposed, it can no longer be found with <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> - it is essentially destroyed but its content is not unloaded (you must call <code>unload()</code> or <code>dispose(true)</code> to unload its content). The default <code>autoDispose</code> value is <code>false</code>.
 		 * 		
 		 * 		<br /><br />----EVENT HANDLER SHORTCUTS----</li>
@@ -241,6 +243,7 @@ package com.greensock.loading {
 			_initSound();
 			_position = 0;
 			_duration = 0;
+			_repeatCount = 0;
 			_soundComplete = false;
 			super._dump(scrubLevel, newStatus);
 			_content = _sound;
@@ -287,32 +290,41 @@ package com.greensock.loading {
 		 * 
 		 * @param time The time (in seconds, offset from the very beginning) at which to place the virtual playhead in the sound.
 		 * @param forcePlay If <code>true</code>, the sound will resume playback immediately after seeking to the new position.
+		 * @param resetRepeatCount If the MP3Loader has a non-zero <code>repeat</code> value (meaning it loops/repeats at least once), setting <code>resetRepeatCount</code> to <code>true</code> will cause it to act like this is the first time through (no repeats yet). For example, if the MP3Loader had a <code>repeat</code> value of 3 and it already repeated twice when <code>gotoSoundTime()</code> was called, it would act like it forgot that it repeated twice already.
 		 * @see #pauseSound()
 		 * @see #playSound()
 		 * @see #soundTime
 		 * @see #playProgress
 		 **/
-		public function gotoSoundTime(time:Number, forcePlay:Boolean=false):void {
+		public function gotoSoundTime(time:Number, forcePlay:Boolean=false, resetRepeatCount:Boolean=true):void {
 			if (time > _duration) {
 				time = _duration;
 			}
 			_position = time * 1000;
 			_soundComplete = false;
+			if (resetRepeatCount) {
+				_repeatCount = 0;
+			}
 			
 			if (!_soundPaused || forcePlay) {
-				if (this.channel != null) {
-					this.channel.removeEventListener(Event.SOUND_COMPLETE, _soundCompleteHandler);
-					this.channel.stop(); 
+				_playSound(_position);
+				if (_soundPaused) {
+					_soundPaused = false;
+					dispatchEvent(new LoaderEvent(SOUND_PLAY, this));
 				}
-				this.channel = _sound.play(_position, ((this.vars.repeat == -1) ? 9999999 : uint(this.vars.repeat) + 1), _soundTransform);
-				if (this.channel != null) { //if the device doesn't have a sound card or sound capabilities, this.channel will be null!
-					this.channel.addEventListener(Event.SOUND_COMPLETE, _soundCompleteHandler);
-					if (_soundPaused) {
-						_shape.addEventListener(Event.ENTER_FRAME, _enterFrameHandler, false, 0, true);
-						_soundPaused = false;
-						dispatchEvent(new LoaderEvent(SOUND_PLAY, this));
-					}
-				}
+			}
+		}
+		
+		protected function _playSound(position:Number):void {
+			if (this.channel != null) {
+				this.channel.removeEventListener(Event.SOUND_COMPLETE, _soundCompleteHandler);
+				this.channel.stop(); 
+			}
+			_position = position;
+			this.channel = _sound.play(_position, 1, _soundTransform);
+			if (this.channel != null) { //if the device doesn't have a sound card or sound capabilities, this.channel will be null!
+				this.channel.addEventListener(Event.SOUND_COMPLETE, _soundCompleteHandler);
+				_shape.addEventListener(Event.ENTER_FRAME, _enterFrameHandler, false, 0, true);
 			}
 		}
 		
@@ -339,11 +351,17 @@ package com.greensock.loading {
 		
 		/** @private **/
 		protected function _soundCompleteHandler(event:Event):void {
-			_soundComplete = true;
-			this.soundPaused = true;
-			_position = _duration * 1000;
-			_enterFrameHandler(null);
-			dispatchEvent(new LoaderEvent(SOUND_COMPLETE, this));
+			if (uint(this.vars.repeat) > _repeatCount || int(this.vars.repeat) == -1) {
+				_repeatCount++;
+				_playSound(0);
+			} else {
+				_repeatCount = 0;
+				_soundComplete = true;
+				this.soundPaused = true;
+				_position = _duration * 1000;
+				_enterFrameHandler(null);
+				dispatchEvent(new LoaderEvent(SOUND_COMPLETE, this));
+			}
 		}
 		
 		/** @private **/
@@ -392,12 +410,9 @@ package com.greensock.loading {
 					this.channel.stop();
 				}
 			} else {
-				this.channel = _sound.play(_position, ((this.vars.repeat == -1) ? 9999999 : uint(this.vars.repeat) + 1), _soundTransform);
-				if (this.channel != null) { //if the device doesn't have a sound card or sound capabilities, this.channel will be null!
-					this.channel.addEventListener(Event.SOUND_COMPLETE, _soundCompleteHandler);
-					_shape.addEventListener(Event.ENTER_FRAME, _enterFrameHandler, false, 0, true);
-				} else {
-					return;
+				_playSound(_position);
+				if (this.channel == null) { //if the device doesn't have a sound card or sound capabilities, this.channel will be null!
+					return; //so that no event is dispatched
 				}
 			}
 			dispatchEvent(new LoaderEvent(((_soundPaused) ? SOUND_PAUSE : SOUND_PLAY), this));

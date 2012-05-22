@@ -1,13 +1,13 @@
 /**
- * VERSION: 1.12
- * DATE: 10/2/2009
- * ACTIONSCRIPT VERSION: 3.0 
- * UPDATES AND DOCUMENTATION AT: http://www.TweenMax.com
+ * VERSION: 12.0
+ * DATE: 2012-01-12
+ * AS3
+ * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.plugins {
-	import com.greensock.*;
+	import com.greensock.TweenLite;
 /**
- * Identical to bezier except that instead of defining bezier control point values, you
+ * [AS3/AS2 only] Identical to bezier except that instead of defining bezier control point values, you
  * define points through which the bezier values should move. This can be more intuitive
  * than using control points. Simply pass as many objects in the bezier Array as you'd like, 
  * one for each point through which the values should travel. For example, if you want the
@@ -46,26 +46,26 @@ package com.greensock.plugins {
  * 		TweenLite.to(mc, 2, {bezierThrough:[{x:250, y:100}, {x:50, y:200}, {x:500, y:200}]}); <br /><br />
  * </code>
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <p><strong>Copyright 2008-2012, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.</p>
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class BezierThroughPlugin extends BezierPlugin {
 		/** @private **/
-		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		
 		/** @private **/
 		public function BezierThroughPlugin() {
 			super();
-			this.propName = "bezierThrough"; //name of the special property that the plugin should intercept/manage
+			_propName = "bezierThrough";
 		}
 		
 		/** @private **/
-		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
 			if (!(value is Array)) {
 				return false;
 			}
-			init(tween, value as Array, true);
+			_init(tween, value as Array, true);
 			return true;	
 		}
 		

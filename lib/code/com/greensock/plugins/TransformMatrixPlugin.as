@@ -1,16 +1,15 @@
 /**
- * VERSION: 1.02
- * DATE: 2010-10-11
- * ACTIONSCRIPT VERSION: 3.0 
- * UPDATES AND DOCUMENTATION AT: http://www.GreenSock.com
+ * VERSION: 12.0
+ * DATE: 2012-01-15
+ * AS3 
+ * UPDATES AND DOCS AT: http://www.greensock.com
  **/
 package com.greensock.plugins {
-	import com.greensock.*;
-	
+	import com.greensock.TweenLite;
 	import flash.geom.Matrix;
 	import flash.geom.Transform;
 /**
- * TransformMatrixPlugin allows you to tween a DisplayObject's transform.matrix values directly 
+ * [AS3/AS2 only] TransformMatrixPlugin allows you to tween a DisplayObject's transform.matrix values directly 
  * (<code>a, b, c, d, tx, and ty</code>) or use common properties like <code>x, y, scaleX, scaleY, 
  * skewX, skewY, rotation</code> and even <code>shortRotation</code>.
  * To skew without adjusting scale visually, use skewX2 and skewY2 instead of skewX and skewY. 
@@ -33,13 +32,13 @@ package com.greensock.plugins {
  * 
  * </code>
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <p><strong>Copyright 2008-2012, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.</p>
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class TransformMatrixPlugin extends TweenPlugin {
 		/** @private **/
-		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		/** @private **/
 		private static const _DEG2RAD:Number = Math.PI / 180;
 		
@@ -76,13 +75,11 @@ package com.greensock.plugins {
 		
 		/** @private **/
 		public function TransformMatrixPlugin() {
-			super();
-			this.propName = "transformMatrix";
-			this.overwriteProps = ["x","y","scaleX","scaleY","rotation","transformMatrix","transformAroundPoint","transformAroundCenter","shortRotation"];
+			super("transformMatrix,x,y,scaleX,scaleY,rotation,width,height,transformAroundPoint,transformAroundCenter");
 		}
 		
 		/** @private **/
-		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
 			_transform = target.transform as Transform;
 			_matrix = _transform.matrix;
 			var matrix:Matrix = _matrix.clone();
@@ -94,14 +91,14 @@ package com.greensock.plugins {
 			_dStart = matrix.d;
 			
 			if ("x" in value) {
-				_txChange = (typeof(value.x) == "number") ? value.x - _txStart : Number(value.x);
+				_txChange = (typeof(value.x) == "number") ? value.x - _txStart : Number(value.x.split("=").join(""));
 			} else if ("tx" in value) {
 				_txChange = value.tx - _txStart;
 			} else {
 				_txChange = 0;
 			}
 			if ("y" in value) {
-				_tyChange = (typeof(value.y) == "number") ? value.y - _tyStart : Number(value.y);
+				_tyChange = (typeof(value.y) == "number") ? value.y - _tyStart : Number(value.y.split("=").join(""));
 			} else if ("ty" in value) {
 				_tyChange = value.ty - _tyStart;
 			} else {
@@ -138,13 +135,13 @@ package com.greensock.plugins {
 					}
 					finalAngle += dif;
 				} else if ("rotation" in value) {
-					finalAngle = (typeof(value.rotation) == "number") ? value.rotation * _DEG2RAD : Number(value.rotation) * _DEG2RAD + angle;
+					finalAngle = (typeof(value.rotation) == "number") ? value.rotation * _DEG2RAD : Number(value.rotation.split("=").join("")) * _DEG2RAD + angle;
 				}
 				
-				var finalSkewX:Number = ("skewX" in value) ? (typeof(value.skewX) == "number") ? Number(value.skewX) * _DEG2RAD : Number(value.skewX) * _DEG2RAD + skewX : 0;
+				var finalSkewX:Number = ("skewX" in value) ? (typeof(value.skewX) == "number") ? Number(value.skewX) * _DEG2RAD : Number(value.skewX.split("=").join("")) * _DEG2RAD + skewX : 0;
 				
 				if ("skewY" in value) { //skewY is just a combination of rotation and skewX
-					var skewY:Number = (typeof(value.skewY) == "number") ? value.skewY * _DEG2RAD : Number(value.skewY) * _DEG2RAD - skewX;
+					var skewY:Number = (typeof(value.skewY) == "number") ? value.skewY * _DEG2RAD : Number(value.skewY.split("=").join("")) * _DEG2RAD - skewX;
 					finalAngle += skewY + skewX;
 					finalSkewX -= skewY;
 				}
@@ -212,31 +209,29 @@ package com.greensock.plugins {
 				_bChange = matrix.b - _bStart;
 				_cChange = matrix.c - _cStart;
 				_dChange = matrix.d - _dStart;
-				
 			}
-			
 			return true;
 		}
 		
 		/** @private **/
-		override public function set changeFactor(n:Number):void {
-			_matrix.a = _aStart + (n * _aChange);
-			_matrix.b = _bStart + (n * _bChange);
-			_matrix.c = _cStart + (n * _cChange);
-			_matrix.d = _dStart + (n * _dChange);
+		override public function setRatio(v:Number):void {
+			_matrix.a = _aStart + (v * _aChange);
+			_matrix.b = _bStart + (v * _bChange);
+			_matrix.c = _cStart + (v * _cChange);
+			_matrix.d = _dStart + (v * _dChange);
 			if (_angleChange) {
 				//about 3-4 times faster than _matrix.rotate(_angleChange * n);
-				var cos:Number = Math.cos(_angleChange * n);
-				var sin:Number = Math.sin(_angleChange * n);
-				var a:Number = _matrix.a;
-				var c:Number = _matrix.c;
+				var cos:Number = Math.cos(_angleChange * v),
+					sin:Number = Math.sin(_angleChange * v),
+					a:Number = _matrix.a,
+					c:Number = _matrix.c;
 				_matrix.a = a * cos - _matrix.b * sin;
 				_matrix.b = a * sin + _matrix.b * cos;
 				_matrix.c = c * cos - _matrix.d * sin;
 				_matrix.d = c * sin + _matrix.d * cos;
 			}
-			_matrix.tx = _txStart + (n * _txChange);
-			_matrix.ty = _tyStart + (n * _tyChange);
+			_matrix.tx = _txStart + (v * _txChange);
+			_matrix.ty = _tyStart + (v * _tyChange);
 			_transform.matrix = _matrix;
 		}
 

@@ -3,6 +3,7 @@ package fashion.nugget.i18n
 
 	import fashion.nugget.events.GlossaryEvent;
 	import fashion.nugget.util.string.printf;
+
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 
@@ -225,9 +226,11 @@ package fashion.nugget.i18n
 import fashion.nugget.Nugget;
 import fashion.nugget.events.GlossaryEvent;
 import fashion.nugget.util.string.printf;
+
 import com.greensock.events.LoaderEvent;
 import com.greensock.loading.LoaderMax;
 import com.greensock.loading.XMLLoader;
+
 import flash.events.EventDispatcher;
 
 internal class Locale extends EventDispatcher
@@ -276,7 +279,7 @@ internal class Locale extends EventDispatcher
 		
 		for(i = 0; i < length; i++)
 		{
-			file = printf(_base[i].@url, { language:_language, basepath:Nugget.basepath });
+			file = printf(_base[i].@url, { language:_language, basepath:Nugget.basepath, cache:String(Math.random() * 100000) });
 			_queue.append(new XMLLoader(file, { onComplete:onChildLoadCompleted }));
 		}
 	}

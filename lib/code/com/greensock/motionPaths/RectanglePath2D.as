@@ -1,6 +1,6 @@
 /**
  * VERSION: 0.4 (beta)
- * DATE: 2010-12-22
+ * DATE: 2011-09-12
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com
  **/
@@ -9,7 +9,7 @@ package com.greensock.motionPaths {
 	import flash.geom.Matrix;
 	import flash.events.Event;
 /**
- * A RectanglePath2D defines a rectangular path on which a PathFollower can be placed, making it simple to tween objects
+ * [AS3 only] A RectanglePath2D defines a rectangular path on which a PathFollower can be placed, making it simple to tween objects
  * along a rectangle's perimeter. A PathFollower's position along the path is described using its <code>progress</code> property, 
  * a value between 0 and 1 where 0 is at the beginning of the path (top left corner), and as the value increases, it
  * moves clockwise along the path so that 0.5 would be at the lower right corner, and 1 is all the way back at the 
@@ -204,7 +204,7 @@ TweenLite.to(follower, 2, {progress:-1});
 			update();
 		}
 		
-		/** height of the rectangle in its unrotated, unscaled state (does not factor in any transformations like scaleX/scaleY/rotation) **/
+		/** If <code>true</code>, the origin (registration point) of the RectanglePath2D will be in its center rather than its upper left corner. **/
 		public function get centerOrigin():Boolean {
 			return _centerOrigin;
 		}

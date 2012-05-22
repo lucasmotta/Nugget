@@ -1,6 +1,7 @@
 package fashion.nugget.display
 {
 
+	import fashion.nugget.core.IDisposable;
 	import fashion.nugget.util.display.safeRemoveChild;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -10,7 +11,7 @@ package fashion.nugget.display
 	 * 
 	 * The SpriteExtended will call the <code>init</code> method when the displayObject is added to the stage.
 	 */
-	public class SpriteExtended extends Sprite
+	public class SpriteExtended extends Sprite implements IDisposable
 	{
 		
 		// ----------------------------------------------------

@@ -1,14 +1,19 @@
 /**
- * VERSION: 1.84
- * DATE: 2011-03-23
+ * VERSION: 1.897
+ * DATE: 2012-01-14
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
 package com.greensock.loading {
+	import com.greensock.events.LoaderEvent;
 	import com.greensock.loading.core.DisplayObjectLoader;
+	import com.greensock.loading.core.LoaderItem;
 	
 	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
 	import flash.events.Event;
+	import flash.events.ProgressEvent;
+
 /**
  * Loads an image file (png, jpg, or gif) and automatically applies smoothing by default. <br /><br />
  * 
@@ -28,6 +33,12 @@ package com.greensock.loading {
  * See the list below for all the special properties that can be passed through the <code>vars</code> 
  * parameter but don't let the list overwhelm you - these are all optional and they are intended to make
  * your job as a developer much easier.<br /><br />
+ * 
+ * <i>[new in version 1.89:]</i> When you <code>load()</code> an ImageLoader, it will automatically 
+ * check to see if another ImageLoader exists with a matching <code>url</code> that has already finished
+ * loading. If it finds one, it will copy that BitmapData to use in its own Bitmap in order to maximize
+ * performance and minimize memory usage. After all, why load the file again if you've already loaded it? 
+ * (The exception, of course, is when the ImageLoader's <code>noCache</code> is set to <code>true</code>.)<br /><br />
  * 
  * By default, the ImageLoader will attempt to load the image in a way that allows full script 
  * access. However, if a security error is thrown because the image is being loaded from another
@@ -98,7 +109,7 @@ package com.greensock.loading {
  * 		<li><strong> alternateURL : String</strong> - If you define an <code>alternateURL</code>, the loader will initially try to load from its original <code>url</code> and if it fails, it will automatically (and permanently) change the loader's <code>url</code> to the <code>alternateURL</code> and try again. Think of it as a fallback or backup <code>url</code>. It is perfectly acceptable to use the same <code>alternateURL</code> for multiple loaders (maybe a default image for various ImageLoaders for example).</li>
  * 		<li><strong> noCache : Boolean</strong> - If <code>true</code>, a "gsCacheBusterID" parameter will be appended to the url with a random set of numbers to prevent caching (don't worry, this info is ignored when you <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> by <code>url</code> or when you're running locally)</li>
  * 		<li><strong> requireWithRoot : DisplayObject</strong> - LoaderMax supports <i>subloading</i>, where an object can be factored into a parent's loading progress. If you want LoaderMax to require this ImageLoader as part of its parent SWFLoader's progress, you must set the <code>requireWithRoot</code> property to your swf's <code>root</code>. For example, <code>var loader:ImageLoader = new ImageLoader("photo1.jpg", {name:"image1", requireWithRoot:this.root});</code></li>
- * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
+ * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
  * 		<li><strong> autoDispose : Boolean</strong> - When <code>autoDispose</code> is <code>true</code>, the loader will be disposed immediately after it completes (it calls the <code>dispose()</code> method internally after dispatching its <code>COMPLETE</code> event). This will remove any listeners that were defined in the vars object (like onComplete, onProgress, onError, onInit). Once a loader is disposed, it can no longer be found with <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> - it is essentially destroyed but its content is not unloaded (you must call <code>unload()</code> or <code>dispose(true)</code> to unload its content). The default <code>autoDispose</code> value is <code>false</code>.
  * 
  * 		<br /><br />----EVENT HANDLER SHORTCUTS----</li>
@@ -235,7 +246,7 @@ package com.greensock.loading {
 		 * 		<li><strong> alternateURL : String</strong> - If you define an <code>alternateURL</code>, the loader will initially try to load from its original <code>url</code> and if it fails, it will automatically (and permanently) change the loader's <code>url</code> to the <code>alternateURL</code> and try again. Think of it as a fallback or backup <code>url</code>. It is perfectly acceptable to use the same <code>alternateURL</code> for multiple loaders (maybe a default image for various ImageLoaders for example).</li>
 		 * 		<li><strong> noCache : Boolean</strong> - If <code>true</code>, a "gsCacheBusterID" parameter will be appended to the url with a random set of numbers to prevent caching (don't worry, this info is ignored when you <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> by <code>url</code> or when you're running locally)</li>
 		 * 		<li><strong> requireWithRoot : DisplayObject</strong> - LoaderMax supports <i>subloading</i>, where an object can be factored into a parent's loading progress. If you want LoaderMax to require this ImageLoader as part of its parent SWFLoader's progress, you must set the <code>requireWithRoot</code> property to your swf's <code>root</code>. For example, <code>var loader:ImageLoader = new ImageLoader("photo1.jpg", {name:"image1", requireWithRoot:this.root});</code></li>
-		 * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&state=il&gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&c=SE&c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
+		 * 		<li><strong> allowMalformedURL : Boolean</strong> - Normally, the URL will be parsed and any variables in the query string (like "?name=test&amp;state=il&amp;gender=m") will be placed into a URLVariables object which is added to the URLRequest. This avoids a few bugs in Flash, but if you need to keep the entire URL intact (no parsing into URLVariables), set <code>allowMalformedURL:true</code>. For example, if your URL has duplicate variables in the query string like <code>http://www.greensock.com/?c=S&amp;c=SE&amp;c=SW</code>, it is technically considered a malformed URL and a URLVariables object can't properly contain all the duplicates, so in this case you'd want to set <code>allowMalformedURL</code> to <code>true</code>.</li>
 		 * 		<li><strong> autoDispose : Boolean</strong> - When <code>autoDispose</code> is <code>true</code>, the loader will be disposed immediately after it completes (it calls the <code>dispose()</code> method internally after dispatching its <code>COMPLETE</code> event). This will remove any listeners that were defined in the vars object (like onComplete, onProgress, onError, onInit). Once a loader is disposed, it can no longer be found with <code>LoaderMax.getLoader()</code> or <code>LoaderMax.getContent()</code> - it is essentially destroyed but its content is not unloaded (you must call <code>unload()</code> or <code>dispose(true)</code> to unload its content). The default <code>autoDispose</code> value is <code>false</code>.
 		 * 
 		 * 		<br /><br />----EVENT HANDLER SHORTCUTS----</li>
@@ -256,6 +267,29 @@ package com.greensock.loading {
 		public function ImageLoader(urlOrRequest:*, vars:Object=null) {
 			super(urlOrRequest, vars);
 			_type = "ImageLoader";
+		}
+		
+		override protected function _load():void {
+			if (this.vars.noCache != true) {
+				//check to see if another ImageLoader with the same URL exists and has completed so that we can copy that BitmapData to speed things up and reduce memory usage. 
+				var loaders:Array = _globalRootLoader.getChildren(true, true);
+				var loader:LoaderItem;
+				var i:int = loaders.length;
+				while (--i > -1) {
+					loader = loaders[i];
+					if (loader.url == _url && loader != this && loader.status == LoaderStatus.COMPLETED && loader is ImageLoader && ImageLoader(loader).rawContent is Bitmap) {
+						_closeStream();
+						_content = new Bitmap(ImageLoader(loader).rawContent.bitmapData, "auto", Boolean(this.vars.smoothing != false));
+						Object(_sprite).rawContent = (_content as DisplayObject);
+						_initted = true;
+						_progressHandler(new ProgressEvent(ProgressEvent.PROGRESS, false, false, loader.bytesLoaded, loader.bytesTotal));
+						dispatchEvent(new LoaderEvent(LoaderEvent.INIT, this));
+						_completeHandler(null);
+						return;
+					}
+				}
+			}
+			super._load();
 		}
 		
 //---- EVENT HANDLERS ------------------------------------------------------------------------------------

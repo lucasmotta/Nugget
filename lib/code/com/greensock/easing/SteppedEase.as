@@ -6,7 +6,7 @@
  **/
 package com.greensock.easing {
 /**
- * Most easing equations give a smooth, gradual transition between the start and end values, but SteppedEase provides
+ * [AS3/AS2 only] Most easing equations give a smooth, gradual transition between the start and end values, but SteppedEase provides
  * an easy way to define a specific number of steps that the transition should take. For example, if mc.x is 0 and you 
  * want to tween it to 100 with 5 steps (20, 40, 60, 80, and 100) over the course of 2 seconds, you'd do:<br /><br /><code>
  * 
@@ -26,7 +26,7 @@ package com.greensock.easing {
  * Note: SteppedEase is optimized for use with the GreenSock tweenining platform, so it isn't intended to be used with other engines. 
  * Specifically, its easing equation always returns values between 0 and 1.<br /><br />
  * 
- * <b>Copyright 2011, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
+ * <p><strong>Copyright 2008-2012, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.</p>
  * 
  * @author Jack Doyle, jack@greensock.com
  */	 

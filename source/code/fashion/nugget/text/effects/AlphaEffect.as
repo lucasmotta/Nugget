@@ -25,7 +25,7 @@ package fashion.nugget.text.effects
 		
 		protected var _timeOut : Number;
 		
-		protected var _ease : Function;
+		protected var _ease : Object;
 		
 		// ----------------------------------------------------
 		// CONSTRUCTOR
@@ -33,7 +33,7 @@ package fashion.nugget.text.effects
 		/**
 		 * @constructor
 		 */
-		public function AlphaEffect(timeIn : Number = 1, timeOut : Number = .5, ease : Function = null)
+		public function AlphaEffect(timeIn : Number = 1, timeOut : Number = .5, ease : Object = null)
 		{
 			_timeIn = timeIn;
 			_timeOut = timeOut;

@@ -1,4 +1,4 @@
-<project name="Nugget" default="Nugget">
+<project name="Nugget">
   <target name="Nugget">
     <fdt.loadProjectProperties projectname="Nugget" />
     <fdt.launch.library projectname="${FDTProject}" compilerarguments=" -target-player=${FDTProjectPlayerVersion}" target="${FDTProjectPath}/dist/FashionNugget.swc" />

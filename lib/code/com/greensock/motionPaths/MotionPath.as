@@ -1,6 +1,6 @@
 /**
- * VERSION: 0.5
- * DATE: 2011-01-12
+ * VERSION: 0.6
+ * DATE: 2011-08-19
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com
  **/
@@ -8,7 +8,7 @@ package com.greensock.motionPaths {
 	import flash.display.Shape;
 	import flash.events.Event;
 /**
- * A MotionPath defines a path along which a PathFollower can travel, making it relatively simple to do 
+ * [AS3 only] A MotionPath defines a path along which a PathFollower can travel, making it relatively simple to do 
  * things like tween an object in a circular path. A PathFollower's position along the path is described using
  * its <code>progress</code> property, a value between 0 and 1 where 0 is at the beginning of the path, 0.5 is in
  * the middle, and 1 is at the very end of the path. So to tween a PathFollower along the path, you can simply
@@ -158,7 +158,7 @@ TweenLite.to(follower, 2, {progress:circle.followerTween(follower, 200, Directio
 			if (f.cachedPrev) {
 				f.cachedPrev.cachedNext = f.cachedNext;
 			} else if (_rootFollower == f) {
-				_rootFollower = null;
+				_rootFollower = f.cachedNext;
 			}
 			f.cachedNext = f.cachedPrev = null;
 			f.path = null;
@@ -421,7 +421,8 @@ TweenLite.to(follower, 2, {progress:circle.followerTween(follower, 200, Directio
 		 * is set to -3.4, <code>progress</code> would be 0.6. You may set <code>progress</code> to any value but it will
 		 * be re-interpolated to its corresponding value between 0 and 1 very much like a DisplayObject's "rotation" 
 		 * property in Flash where setting it to 270 works fine but when you trace() the rotation value it will report 
-		 * as -90 instead. Setting <code>progress</code> affects <code>rawProgress</code> too. For example:<br /><br /><code>
+		 * as -90 instead because rotation is always interpolated to be between 180 and -180. Setting <code>progress</code> 
+		 * affects <code>rawProgress</code> too. For example:<br /><br /><code>
 		 * 
 		 * myPath.progress = 2.1;<br />
 		 * trace(myPath.progress); //traces "0.1"<br />
@@ -429,14 +430,27 @@ TweenLite.to(follower, 2, {progress:circle.followerTween(follower, 200, Directio
 		 * 
 		 * Either property can be used to move all followers along the path. Unlike a PathFollower's 
 		 * <code>progress</code> or <code>rawProgress</code>, this value is not absolute for motion paths - it simply 
-		 * facilitates relative movement of followers together along the path in a way that performs better than 
+		 * facilitates movement of followers together along the path in a way that performs better than 
 		 * tweening each follower independently (plus it's easier). If your goal is to tween all followers around 
 		 * a CirclePath2D twice completely, you could just add 2 to the <code>progress</code> or 
 		 * <code>rawProgress</code> value or use a relative value in the tween, like: <br /><br /><code>
 		 * 
-		 * TweenLite.to(myCircle, 5, {progress:"2"}); //or myCircle.progress + 2
+		 * TweenLite.to(myCircle, 5, {progress:"2"}); //or myCircle.progress + 2<br /><br /></code>
 		 * 
-		 * </code>
+		 * Also note that if you set <code>progress</code> to any value <i>outside</i> of the 0-1 range, 
+		 * <code>rawProgress</code> will be set to that exact value. If <code>progress</code> is
+		 * set to a value <i>within</i> the typical 0-1 range, it will only affect the decimal value of 
+		 * <code>rawProgress</code>. For example, if <code>rawProgress</code> is 3.4 and then you 
+		 * set <code>progress</code> to 0.1, <code>rawProgress</code> will end up at 3.1 (notice
+		 * the "3" integer was kept). But if <code>progress</code> was instead set to 5.1, since
+		 * it exceeds the 0-1 range, <code>rawProgress</code> would become 5.1. This behavior was 
+		 * adopted in order to deal most effectively with wrapping situations. For example, if 
+		 * <code>rawProgress</code> was tweened to 3.4 and then later you wanted to fine-tune
+		 * where things were positioned by tweening <code>progress</code> to 0.8, it still may be
+		 * important to be able to determine how many loops/wraps occurred, so <code>rawProgress</code>
+		 * should be 3.8, not reset to 0.8. Feel free to use <code>rawProgress</code> exclusively if you 
+		 * prefer to avoid any of the re-interpolation that occurs with <code>progress</code>.
+		 * 
 		 * @see #rawProgress
 		 **/
 		public function get progress():Number {
