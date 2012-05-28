@@ -84,7 +84,7 @@ package fashion.nugget.text
 		protected function setupText() : void
 		{
 			var style : Object = _css.getStyle("." + _styleClass);
-			if(style.hasOwnProperty("text-transform")) _textTransform = style["text-transform"];
+			if(style.hasOwnProperty("textTransform")) _textTransform = style["textTransform"];
 			
 			_textField = new TextField();
 			_textField.multiline = false;
@@ -109,7 +109,6 @@ package fashion.nugget.text
 			if(style.hasOwnProperty("y")) _textField.y = style["y"];
 			if(style.hasOwnProperty("width")) this.width = style["width"];
 			if(style.hasOwnProperty("height")) this.height = style["height"];
-			if(style.hasOwnProperty("text_")) this.height = style["height"];
 		}
 		
 		protected function setContent(value : String, applyCSS : Boolean = true) : String
